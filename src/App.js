@@ -1,26 +1,31 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from 'react'
+import { Container, Fab } from '@material-ui/core'
+import { Add } from '@material-ui/icons'
 
-function App() {
+import Navigation from './components/Navigation'
+import Project from './components/Project'
+import useStyles from './styles'
+
+export default function App () {
+  const classes = useStyles()
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+    <React.Fragment>
+      <Container className={classes.container}>
+        <Project />
+        <Project />
+        <Project />
+        <Project />
+        <Project />
+        <Fab
+          color='primary'
+          aria-label='Add'
+          className={classes.fab}
         >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+          <Add />
+        </Fab>
+      </Container>
+      <Navigation />
+    </React.Fragment>
+  )
 }
-
-export default App;

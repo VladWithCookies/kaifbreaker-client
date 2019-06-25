@@ -1,6 +1,6 @@
 import React from 'react'
+import { Delete } from '@material-ui/icons'
 import { ListItem, ListItemText, ListItemIcon, Checkbox, ListItemSecondaryAction, IconButton } from '@material-ui/core'
-import { Delete, Edit } from '@material-ui/icons'
 
 export default function Task() {
   return (

@@ -1,31 +1,19 @@
 import React from 'react'
-import { Container, Fab } from '@material-ui/core'
-import { Add } from '@material-ui/icons'
+import { Switch, Route, BrowserRouter } from 'react-router-dom'
 
-import Navigation from './components/Navigation'
-import Project from './components/Project'
-import useStyles from './styles'
+import NavigationLayout from './components/NavigationLayout'
+import Projects from './screens/Projects'
+import ProjectDetails from './screens/ProjectDetails'
 
 export default function App () {
-  const classes = useStyles()
-
   return (
-    <React.Fragment>
-      <Container className={classes.container}>
-        <Project />
-        <Project />
-        <Project />
-        <Project />
-        <Project />
-        <Fab
-          color='primary'
-          aria-label='Add'
-          className={classes.fab}
-        >
-          <Add />
-        </Fab>
-      </Container>
-      <Navigation />
-    </React.Fragment>
+    <BrowserRouter>
+      <Switch>
+        <NavigationLayout>
+          <Route exact path='/' component={Projects} />
+          <Route exact path='/skill-branches' component={ProjectDetails} />
+        </NavigationLayout>
+      </Switch>
+    </BrowserRouter>
   )
 }

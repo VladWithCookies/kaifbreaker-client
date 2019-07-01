@@ -8,7 +8,7 @@ export default function Task() {
       <ListItemIcon>
         <Checkbox />
       </ListItemIcon>
-      <ListItemText primary='Todo item' />
+      <ListItemText primary='Задача' />
       <ListItemSecondaryAction>
         <IconButton aria-label='Delete'>
           <Delete />

@@ -3,7 +3,7 @@ import { Switch, Route, BrowserRouter } from 'react-router-dom'
 
 import NavigationLayout from './components/NavigationLayout'
 import Projects from './screens/Projects'
-import ProjectDetails from './screens/ProjectDetails'
+import SkillBranches from './screens/SkillBranches'
 
 export default function App () {
   return (
@@ -11,7 +11,7 @@ export default function App () {
       <Switch>
         <NavigationLayout>
           <Route exact path='/' component={Projects} />
-          <Route exact path='/skill-branches' component={ProjectDetails} />
+          <Route exact path='/skill-branches' component={SkillBranches} />
         </NavigationLayout>
       </Switch>
     </BrowserRouter>

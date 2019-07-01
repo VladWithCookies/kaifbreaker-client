@@ -1,16 +1,16 @@
 import React from 'react'
 import { Card, CardHeader, CardActions, List, ButtonBase } from '@material-ui/core'
 
-import Task from '../Task'
+import Task from '../../../components/Task'
 import useStyles from './styles'
 
-export default function Project() {
+export default function ProjectItem() {
   const classes = useStyles()
 
   return (
     <Card className={classes.card}>
       <CardHeader
-        title='Todo list title'
+        title='Название тудулиста'
         className={classes.header}
       />
       <List>
@@ -20,7 +20,7 @@ export default function Project() {
       </List>
       <ButtonBase className={classes.addButton}>
         <CardActions>
-          + Add Task
+          + Добавить задачу
         </CardActions>
       </ButtonBase>
     </Card>

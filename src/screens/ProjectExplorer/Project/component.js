@@ -4,7 +4,7 @@ import { Card, CardHeader, CardActions, ButtonBase, List } from '@material-ui/co
 import Task from './Task'
 import useStyles from './styles'
 
-export default function SkillBranch() {
+export default function Prorject() {
   const classes = useStyles()
 
   return (
@@ -21,7 +21,7 @@ export default function SkillBranch() {
       </List>
       <ButtonBase className={classes.addButton}>
         <CardActions>
-          + Добавить в мои задачи
+          + Добавить к себе
         </CardActions>
       </ButtonBase>
     </Card>

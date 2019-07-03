@@ -1,16 +1,16 @@
 import React from 'react'
 import { Container } from '@material-ui/core'
 
-import SkillBranchItem from './SkillBranchItem'
+import Project from './Project'
 import useStyles from './styles'
 
-export default function SkillBranches() {
+export default function ProjectExplorer() {
   const classes = useStyles()
 
   return (
     <Container className={classes.container}>
-      <SkillBranchItem />
-      <SkillBranchItem />
+      <Project />
+      <Project />
     </Container>
   )
 }

@@ -14,6 +14,7 @@ function Navigation({ history }) {
       className={classes.container}
     >
       <BottomNavigationAction
+        selected
         icon={<List />}
         label='ЗАДАЧИ'
         className={classes.action}
@@ -21,9 +22,9 @@ function Navigation({ history }) {
       />
       <BottomNavigationAction
         icon={<Search />}
-        label='НАЙТИ ВЕТКУ РАЗВИТИЯ'
+        label='НАЙТИ ЧЕМ ЗАНЯТЬСЯ'
         className={classes.action}
-        onClick={() => history.push('/skill-branches')}
+        onClick={() => history.push('/project-explorer')}
       />
     </BottomNavigation>
   )

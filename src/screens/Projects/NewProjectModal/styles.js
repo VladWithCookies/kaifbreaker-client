@@ -9,7 +9,24 @@ const useStyles = makeStyles({
     backgroundColor: pink['500']
   },
   dialog: {
-    opacity: 0.8
+    opacity: 0.9
+  },
+  formContainer: {
+    padding: 100,
+    height: '100vh'
+  },
+  form: {
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-around'
+  },
+  input: {
+    width: '100%',
+  },
+  actions: {
+    display: 'flex',
+    justifyContent: 'space-between'
   }
 })
 

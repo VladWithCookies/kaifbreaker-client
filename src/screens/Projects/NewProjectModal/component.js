@@ -5,7 +5,7 @@ import { Dialog, Fab, TextField, Container, Button, FormControlLabel, Switch } f
 import DateTime from '../../../components/Inputs/DateTime'
 import useStyles from './styles'
 
-export default function({ isOpen, onOpen, onClose }) {
+export default function({ isOpen, onOpen, onClose, values, handleSubmit }) {
   const classes = useStyles()
 
   return (
@@ -25,7 +25,10 @@ export default function({ isOpen, onOpen, onClose }) {
         className={classes.dialog}
       >
         <Container className={classes.formContainer}>
-          <form className={classes.form}>
+          <form
+            onSubmit={handleSubmit}
+            className={classes.form}
+          >
             <TextField
               id='title'
               label='Название'
@@ -45,10 +48,17 @@ export default function({ isOpen, onOpen, onClose }) {
               label='Публичный'
             />
             <div className={classes.actions}>
-              <Button variant='outlined'>
+              <Button
+                variant='outlined'
+                onClick={onClose}
+              >
                 Не, не надо
               </Button>
-              <Button variant='outlined' color='secondary'>
+              <Button
+                variant='outlined'
+                color='secondary'
+                type='submit'
+              >
                 Создать список
               </Button>
             </div>

@@ -6,7 +6,7 @@ import Projects from './screens/Projects'
 import ProjectExplorer from './screens/ProjectExplorer'
 import ProjectDetails from './screens/ProjectDetails'
 
-export default function App () {
+export default function App() {
   return (
     <BrowserRouter>
       <Switch>

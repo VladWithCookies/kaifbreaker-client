@@ -14,7 +14,6 @@ function Navigation({ history }) {
       className={classes.container}
     >
       <BottomNavigationAction
-        selected
         icon={<List />}
         label='ЗАДАЧИ'
         className={classes.action}

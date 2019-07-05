@@ -1,28 +1,33 @@
 import React from 'react'
-import { Card, CardHeader, CardActions, List, ButtonBase } from '@material-ui/core'
+import { withRouter } from 'react-router'
+import { Card, CardHeader, List, ButtonBase } from '@material-ui/core'
 
 import Task from '../../../components/Task'
+import AddItemButton from '../../../components/AddItemButton'
 import useStyles from './styles'
 
-export default function ProjectItem() {
+function ProjectItem({ history }) {
   const classes = useStyles()
 
   return (
     <Card className={classes.card}>
-      <CardHeader
-        title='Название тудулиста'
-        className={classes.header}
-      />
+      <ButtonBase
+        className={classes.button}
+        onClick={() => history.push('/project-details')}
+      >
+        <CardHeader
+          title='Название тудулиста'
+          className={classes.header}
+        />
+      </ButtonBase>
       <List>
         <Task />
         <Task />
         <Task />
       </List>
-      <ButtonBase className={classes.addButton}>
-        <CardActions>
-          + Добавить задачу
-        </CardActions>
-      </ButtonBase>
+      <AddItemButton caption='Добавить задачу' />
     </Card>
   )
 }
+
+export default withRouter(ProjectItem)

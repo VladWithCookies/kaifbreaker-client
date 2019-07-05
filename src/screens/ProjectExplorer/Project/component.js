@@ -1,6 +1,7 @@
 import React from 'react'
-import { Card, CardHeader, CardActions, ButtonBase, List } from '@material-ui/core'
+import { Card, CardHeader, List } from '@material-ui/core'
 
+import AddItemButton from '../../../components/AddItemButton'
 import Task from './Task'
 import useStyles from './styles'
 
@@ -19,11 +20,7 @@ export default function Prorject() {
         <Task />
         <Task />
       </List>
-      <ButtonBase className={classes.addButton}>
-        <CardActions>
-          + Добавить к себе
-        </CardActions>
-      </ButtonBase>
+      <AddItemButton caption='Добавить к себе' />
     </Card>
   )
 }

@@ -12,8 +12,8 @@ export default function App() {
       <Switch>
         <NavigationLayout>
           <Route exact path='/' component={Projects} />
-          <Route exact path='/project-details' component={ProjectDetails} />
           <Route exact path='/project-explorer' component={ProjectExplorer} />
+          <Route exact path='/project-details' component={ProjectDetails} />
         </NavigationLayout>
       </Switch>
     </BrowserRouter>

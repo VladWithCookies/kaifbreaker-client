@@ -6,7 +6,8 @@ const useStyles = makeStyles({
     backgroundColor: grey['200'],
     padding: 20,
     height: '100%',
-    minHeight: '100vh'
+    minHeight: '100vh',
+    paddingBottom: 50
   }
 })
 

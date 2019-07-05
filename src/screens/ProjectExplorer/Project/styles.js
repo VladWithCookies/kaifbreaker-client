@@ -1,5 +1,5 @@
 import { makeStyles } from '@material-ui/core/styles'
-import { indigo, grey } from '@material-ui/core/colors'
+import { indigo } from '@material-ui/core/colors'
 
 const useStyles = makeStyles({
   card: {
@@ -9,12 +9,6 @@ const useStyles = makeStyles({
     textAlign: 'center',
     backgroundColor: indigo['500'],
     color: 'white'
-  },
-  addButton: {
-    padding: 5,
-    width: '100%',
-    fontSize: 24,
-    color: grey['500']
   }
 })
 

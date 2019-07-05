@@ -4,10 +4,22 @@ import { grey } from '@material-ui/core/colors'
 const useStyles = makeStyles({
   container: {
     backgroundColor: grey['200'],
-    padding: 20,
     height: '100%',
     minHeight: '100vh',
+    paddingTop: 76,
+    paddingLeft: 20,
+    paddingRight: 20,
     paddingBottom: 50
+  },
+  card: {
+    marginBottom: 20
+  },
+  stats: {
+    display: 'flex',
+    alignItems: 'center'
+  },
+  statsText: {
+    marginLeft: 20
   }
 })
 

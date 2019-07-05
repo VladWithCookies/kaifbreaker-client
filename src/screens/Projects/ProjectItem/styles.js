@@ -8,7 +8,11 @@ const useStyles = makeStyles({
   header: {
     textAlign: 'center',
     backgroundColor: indigo['500'],
-    color: 'white'
+    color: 'white',
+    width: '100%'
+  },
+  button: {
+    width: '100%'
   },
   addButton: {
     padding: 5,

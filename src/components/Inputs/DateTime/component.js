@@ -4,7 +4,7 @@ import { DateTimePicker, MuiPickersUtilsProvider } from '@material-ui/pickers'
 
 import useStyles from './styles'
 
-export default function DateTimeInput({ className }) {
+export default function DateTimeInput() {
   const classes = useStyles()
 
   return (
@@ -12,7 +12,7 @@ export default function DateTimeInput({ className }) {
       <MuiPickersUtilsProvider utils={DateUtils}>
         <DateTimePicker
           clearable
-          className={className}
+          className={classes.input}
           label='Дeдлайн'
           value={null}
         />

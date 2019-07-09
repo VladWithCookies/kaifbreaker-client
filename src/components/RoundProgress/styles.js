@@ -1,12 +1,12 @@
 import { makeStyles } from '@material-ui/core/styles'
 
 const useStyles = makeStyles({
-  container: {
-    marginTop: 16,
-    marginBottom: 8
+  stats: {
+    display: 'flex',
+    alignItems: 'center'
   },
-  input: {
-    width: '100%'
+  statsText: {
+    marginLeft: 20
   }
 })
 

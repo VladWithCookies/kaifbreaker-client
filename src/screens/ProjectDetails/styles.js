@@ -13,13 +13,6 @@ const useStyles = makeStyles({
   },
   card: {
     marginBottom: 20
-  },
-  stats: {
-    display: 'flex',
-    alignItems: 'center'
-  },
-  statsText: {
-    marginLeft: 20
   }
 })
 

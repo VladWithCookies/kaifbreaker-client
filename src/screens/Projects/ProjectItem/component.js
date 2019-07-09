@@ -1,9 +1,8 @@
 import React from 'react'
 import { withRouter } from 'react-router'
-import { Card, CardHeader, List, ButtonBase } from '@material-ui/core'
+import { Card, CardHeader, ButtonBase } from '@material-ui/core'
 
-import Task from '../../../components/Task'
-import AddItemButton from '../../../components/AddItemButton'
+import Project from '../../../components/Project'
 import useStyles from './styles'
 
 function ProjectItem({ history }) {
@@ -20,12 +19,7 @@ function ProjectItem({ history }) {
           className={classes.header}
         />
       </ButtonBase>
-      <List>
-        <Task />
-        <Task />
-        <Task />
-      </List>
-      <AddItemButton caption='Добавить задачу' />
+      <Project />
     </Card>
   )
 }

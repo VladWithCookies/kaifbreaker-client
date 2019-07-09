@@ -31,7 +31,7 @@ const mapPropsToValues = () => ({
   isPublic: false
 })
 
-export default withFormik(
+export default withFormik({
   handleSubmit,
   mapPropsToValues
-)(NewProjectModal)
+})(NewProjectModal)

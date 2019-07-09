@@ -1,11 +1,13 @@
 import React from 'react'
+import { Field } from 'formik'
 import { Add } from '@material-ui/icons'
-import { Dialog, Fab, TextField, Container, Button, FormControlLabel, Switch } from '@material-ui/core'
+import { Dialog, Fab, Container, Button, FormControlLabel, Switch } from '@material-ui/core'
 
 import DateTime from '../../../components/Inputs/DateTime'
+import TextField from '../../../components/Fields/TextField'
 import useStyles from './styles'
 
-export default function({ isOpen, onOpen, onClose, values, handleSubmit }) {
+export default function({ isOpen, onOpen, onClose, handleSubmit, values }) {
   const classes = useStyles()
 
   return (
@@ -29,20 +31,20 @@ export default function({ isOpen, onOpen, onClose, values, handleSubmit }) {
             onSubmit={handleSubmit}
             className={classes.form}
           >
-            <TextField
+            <Field
               id='title'
+              name='title'
               label='Название'
-              margin='normal'
-              className={classes.input}
+              component={TextField}
             />
-            <TextField
+            <Field
               id='description'
+              name='description'
               label='Описание'
-              margin='normal'
-              className={classes.input}
+              component={TextField}
               multiline
             />
-            <DateTime className={classes.input} />
+            <DateTime />
             <FormControlLabel
               control={<Switch />}
               label='Публичный'

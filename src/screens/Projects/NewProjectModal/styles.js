@@ -21,9 +21,6 @@ const useStyles = makeStyles({
     flexDirection: 'column',
     justifyContent: 'space-around'
   },
-  input: {
-    width: '100%',
-  },
   actions: {
     display: 'flex',
     justifyContent: 'space-between'

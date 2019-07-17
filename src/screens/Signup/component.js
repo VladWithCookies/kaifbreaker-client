@@ -5,7 +5,7 @@ import { Container, Button } from '@material-ui/core'
 import TextField from '../../components/Fields/TextField'
 import useStyles from './styles'
 
-export default function Signup({ handleSubmit }) {
+export default function Signup({ handleSubmit, errors }) {
   const classes = useStyles()
 
   return (
@@ -13,7 +13,7 @@ export default function Signup({ handleSubmit }) {
       <form onSubmit={handleSubmit}>
         <Field
           id='firstName'
-          name='lastName'
+          name='firstName'
           label='Имя'
           component={TextField}
         />

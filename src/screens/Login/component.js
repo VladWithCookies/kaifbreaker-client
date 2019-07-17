@@ -1,11 +1,11 @@
 import React from 'react'
 import { Field } from 'formik'
-import { Container, Button } from '@material-ui/core'
+import { Container, Button, FormHelperText } from '@material-ui/core'
 
 import TextField from '../../components/Fields/TextField'
 import useStyles from './styles'
 
-export default function Login({ handleSubmit }) {
+function Login({ handleSubmit, errors }) {
   const classes = useStyles()
 
   return (
@@ -24,6 +24,11 @@ export default function Login({ handleSubmit }) {
           label='Пароль'
           component={TextField}
         />
+        {errors.api && (
+          <FormHelperText error>
+            {errors.api}
+          </FormHelperText>
+        )}
         <Button
           type='submit'
           color='primary'
@@ -36,3 +41,5 @@ export default function Login({ handleSubmit }) {
     </Container>
   )
 }
+
+export default Login

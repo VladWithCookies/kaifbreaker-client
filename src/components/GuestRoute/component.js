@@ -1,12 +1,19 @@
-import React from 'react';
+import React from 'react'
 import { Route, Redirect } from 'react-router'
 
-const GuestRoute = ({ isLoggedIn, component: Component, ...rest }) => (
+import isLoggedIn from '../../utils/auth/isLoggedIn'
+import GuestLayout from '../GuestLayout'
+
+const GuestRoute = ({ component: Component, ...rest }) => (
   <Route
     {...rest}
-    render={(props) => isLoggedIn
+    render={(props) => isLoggedIn()
       ? <Redirect to="/" />
-      : <Component {...props } />
+      : (
+        <GuestLayout>
+          <Component {...props } />
+        </GuestLayout>
+      )
     }
   />
 )

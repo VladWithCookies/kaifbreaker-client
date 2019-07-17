@@ -1,3 +1,3 @@
-import AuthNavigation from './component'
+import AuthNavigation from './container'
 
 export default AuthNavigation

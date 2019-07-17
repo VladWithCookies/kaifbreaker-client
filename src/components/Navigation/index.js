@@ -1,3 +1,3 @@
-import Navigation from './component'
+import Navigation from './container'
 
 export default Navigation

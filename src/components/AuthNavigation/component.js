@@ -5,7 +5,7 @@ import { BottomNavigation, BottomNavigationAction } from '@material-ui/core'
 import { Input, AccountCircle } from '@material-ui/icons'
 import useStyles from './styles'
 
-function AuthNavigation({ history }) {
+function AuthNavigation({ onLoginClick, onSignupClick }) {
   const classes = useStyles()
 
   return (
@@ -16,14 +16,14 @@ function AuthNavigation({ history }) {
       <BottomNavigationAction
         icon={<Input />}
         label='ВОЙТИ'
+        onClick={onLoginClick}
         className={classes.action}
-        onClick={() => history.push('/login')}
       />
       <BottomNavigationAction
         icon={<AccountCircle />}
         label='СОЗДАТЬ АККАУНТ'
+        onClick={onSignupClick}
         className={classes.action}
-        onClick={() => history.push('/signup')}
       />
     </BottomNavigation>
   )

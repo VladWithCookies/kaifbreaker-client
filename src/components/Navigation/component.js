@@ -1,11 +1,13 @@
 import React from 'react'
-import { withRouter } from 'react-router'
 
 import { BottomNavigation, BottomNavigationAction } from '@material-ui/core'
 import { Search, List } from '@material-ui/icons'
 import useStyles from './styles'
 
-function Navigation({ history }) {
+export default function Navigation({
+  onTasksClick,
+  onProjectExplorerClick
+}) {
   const classes = useStyles()
 
   return (
@@ -17,16 +19,14 @@ function Navigation({ history }) {
         icon={<List />}
         label='ЗАДАЧИ'
         className={classes.action}
-        onClick={() => history.push('/')}
+        onClick={onTasksClick}
       />
       <BottomNavigationAction
         icon={<Search />}
         label='НАЙТИ ЧЕМ ЗАНЯТЬСЯ'
         className={classes.action}
-        onClick={() => history.push('/project-explorer')}
+        onClick={onProjectExplorerClick}
       />
     </BottomNavigation>
   )
 }
-
-export default withRouter(Navigation)

@@ -5,6 +5,7 @@ import useStyles from './styles'
 
 export default function({
   id,
+  type,
   label,
   field,
   multiline,
@@ -15,6 +16,7 @@ export default function({
     <TextField
       {...field}
       id={id}
+      type={type}
       label={label}
       margin='normal'
       multiline={multiline}

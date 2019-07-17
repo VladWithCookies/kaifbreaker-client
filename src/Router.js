@@ -1,7 +1,12 @@
 import React from 'react'
-import { Switch, Route, BrowserRouter } from 'react-router-dom'
+import { Switch, BrowserRouter } from 'react-router-dom'
 
-import NavigationLayout from './components/NavigationLayout'
+import GuestLayout from './components/GuestLayout'
+import PrivateLayout from './components/PrivateLayout'
+import PrivateRoute from './components/PrivateRoute'
+import GuestRoute from './components/GuestRoute'
+import Login from './screens/Login'
+import Signup from './screens/Signup'
 import Projects from './screens/Projects'
 import ProjectExplorer from './screens/ProjectExplorer'
 import ProjectDetails from './screens/ProjectDetails'
@@ -10,11 +15,15 @@ export default function Router() {
   return (
     <BrowserRouter>
       <Switch>
-        <NavigationLayout>
-          <Route exact path='/' component={Projects} />
-          <Route exact path='/project-explorer' component={ProjectExplorer} />
-          <Route exact path='/project-details' component={ProjectDetails} />
-        </NavigationLayout>
+        <GuestLayout>
+          <GuestRoute exact path='/signup' component={Signup} />
+          <GuestRoute exact path='/login' component={Login} />
+        </GuestLayout>
+        <PrivateLayout>
+          <PrivateRoute exact path='/' component={Projects} />
+          <PrivateRoute exact path='/project-explorer' component={ProjectExplorer} />
+          <PrivateRoute exact path='/project-details' component={ProjectDetails} />
+        </PrivateLayout>
       </Switch>
     </BrowserRouter>
   )

@@ -1,0 +1,2 @@
+export const MIN_PASSWORD_CHARS_COUNT = 6
+

@@ -1,24 +1,39 @@
 import React from 'react'
-import { TextField } from '@material-ui/core'
+import { FormControl, InputLabel, Input, FormHelperText } from '@material-ui/core'
 
 import useStyles from './styles'
 
 export default function({
   id,
+  type,
   label,
   field,
+  error,
+  isError,
   multiline,
 }) {
   const classes = useStyles()
 
   return (
-    <TextField
-      {...field}
-      id={id}
-      label={label}
+    <FormControl
       margin='normal'
-      multiline={multiline}
       className={classes.input}
-    />
+      error={isError}
+    >
+      <InputLabel htmlFor={id}>
+        {label}
+      </InputLabel>
+      <Input
+        {...field}
+        id={id}
+        type={type}
+        multiline={multiline}
+      />
+      {isError && (
+        <FormHelperText>
+          {error}
+        </FormHelperText>
+      )}
+    </FormControl>
   )
 }

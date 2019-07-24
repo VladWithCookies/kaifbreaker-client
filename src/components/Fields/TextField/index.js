@@ -1,3 +1,3 @@
-import TextField from './component'
+import TextField from './container'
 
 export default TextField

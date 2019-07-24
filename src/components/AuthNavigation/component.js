@@ -1,13 +1,11 @@
 import React from 'react'
+import { withRouter } from 'react-router'
 
 import { BottomNavigation, BottomNavigationAction } from '@material-ui/core'
-import { Search, List } from '@material-ui/icons'
+import { Input, AccountCircle } from '@material-ui/icons'
 import useStyles from './styles'
 
-export default function Navigation({
-  onTasksClick,
-  onProjectExplorerClick
-}) {
+function AuthNavigation({ onLoginClick, onSignupClick }) {
   const classes = useStyles()
 
   return (
@@ -16,17 +14,19 @@ export default function Navigation({
       className={classes.container}
     >
       <BottomNavigationAction
-        icon={<List />}
-        label='ЗАДАЧИ'
+        icon={<Input />}
+        label='ВОЙТИ'
+        onClick={onLoginClick}
         className={classes.action}
-        onClick={onTasksClick}
       />
       <BottomNavigationAction
-        icon={<Search />}
-        label='НАЙТИ ЧЕМ ЗАНЯТЬСЯ'
+        icon={<AccountCircle />}
+        label='СОЗДАТЬ АККАУНТ'
+        onClick={onSignupClick}
         className={classes.action}
-        onClick={onProjectExplorerClick}
       />
     </BottomNavigation>
   )
 }
+
+export default withRouter(AuthNavigation)

@@ -11,7 +11,7 @@ import ProjectDetails from './screens/ProjectDetails'
 
 export default function Router() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={process.env.PUBLIC_URL}>
       <Switch>
         <GuestRoute exact path='/signup' component={Signup} />
         <GuestRoute exact path='/login' component={Login} />

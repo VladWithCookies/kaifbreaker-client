@@ -2,7 +2,7 @@
   "name": "kaifbraker-client",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://vladwithcookies.github.io/kaifbraker-client/",
+  "homepage": "https://vladwithcookies.github.io/kaifbreaker-client/",
   "dependencies": {
     "@date-io/dayjs": "^1.3.8",
     "@material-ui/core": "^4.0.0-rc.0",

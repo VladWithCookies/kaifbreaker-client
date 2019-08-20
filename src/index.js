@@ -2,10 +2,11 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import firebase from 'firebase'
 
-import App from './App'
+import App from './components/App'
 import * as serviceWorker from './serviceWorker';
 import './index.css'
 
+// TOOD: extract to another file
 const config = {
   messagingSenderId: '995810719629'
 }
@@ -21,5 +22,5 @@ const config = {
 
 ReactDOM.render(<App />, document.getElementById('root'));
 
-serviceWorker.unregister();
+serviceWorker.register();
 

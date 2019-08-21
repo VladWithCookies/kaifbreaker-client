@@ -4,7 +4,7 @@
   "background_color": "#039be5",
   "display": "standalone",
   "scope": "/",
-  "start_url": "/login",
+  "start_url": "/",
   "theme_color": "#039be5",
   "icons": [
     {

@@ -1,10 +1,12 @@
 import Cookies from 'js-cookie'
 import { ApolloClient } from 'apollo-client'
 import { ApolloLink } from 'apollo-link'
+import QueueLink from 'apollo-link-queue'
 import { HttpLink } from 'apollo-link-http'
 import { RetryLink } from 'apollo-link-retry'
 import { onError } from 'apollo-link-error'
 import { setContext } from 'apollo-link-context'
+import SerializingLink from 'apollo-link-serialize'
 import { CachePersistor } from 'apollo-cache-persist'
 import { InMemoryCache } from 'apollo-cache-inmemory'
 
@@ -34,7 +36,12 @@ const getApolloClient = async () => {
     }
   })
 
+  const queueLink = new QueueLink()
+  const serializingLink = new SerializingLink()
+
   const link = ApolloLink.from([
+    queueLink,
+    serializingLink,
     retryLink,
     errorLink,
     authLink,

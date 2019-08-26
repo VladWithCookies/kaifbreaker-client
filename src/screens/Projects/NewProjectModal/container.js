@@ -1,6 +1,9 @@
 import React, { useState } from 'react'
 import { withFormik } from 'formik'
+import { compose, graphql } from 'react-apollo'
 
+import { getProjects } from '../../../queries'
+import { createProject } from '../../../mutations'
 import NewProjectModalComponent from './component'
 
 function NewProjectModal(props) {
@@ -20,18 +23,38 @@ function NewProjectModal(props) {
   )
 }
 
-const handleSubmit = (values) => {
-  console.log(values)
+const handleSubmit = (values, { props }) => {
+  const { mutate } = props
+
+  mutate({
+    variables: values,
+    update: (cache, { data: { createProject } }) => {
+      const data = cache.readQuery({ query: getProjects })
+
+      data.projects.push(createProject)
+      cache.writeQuery({ query: getProjects, data })
+    },
+    optimisticResponse: {
+      createProject: {
+        id: -1,
+        __typename: 'Project',
+        ...values,
+      },
+    },
+    context: {
+      serializationKey: 'CREATE_PROJECT',
+    },
+  })
 }
 
 const mapPropsToValues = () => ({
   title: '',
   description: '',
   deadline: '',
-  isPublic: false
+  public: false
 })
 
-export default withFormik({
-  handleSubmit,
-  mapPropsToValues
-})(NewProjectModal)
+export default compose(
+  graphql(createProject),
+  withFormik({ handleSubmit, mapPropsToValues })
+)(NewProjectModal)

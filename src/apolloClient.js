@@ -1,6 +1,6 @@
 import Cookies from 'js-cookie'
 import { ApolloClient } from 'apollo-client'
-import { concat } from 'apollo-link'
+import { ApolloLink } from 'apollo-link'
 import { HttpLink } from 'apollo-link-http'
 import { RetryLink } from 'apollo-link-retry'
 import { onError } from 'apollo-link-error'
@@ -12,7 +12,11 @@ const API_HOST = 'http://localhost:3000/graphql'
 
 const getApolloClient = async () => {
   const httpLink = new HttpLink({ uri: API_HOST })
-  const retryLink = new RetryLink({ attempts : { max : Infinity } })
+
+  const retryLink = new RetryLink({
+    attempts: { max: Infinity, initial: 500 },
+    attempts: { max: Infinity },
+  })
 
   const authLink = setContext(({ headers }) => {
     const token = Cookies.get('token')
@@ -39,10 +43,14 @@ const getApolloClient = async () => {
     storage: window.localStorage
   })
 
-  const client = new ApolloClient({
-    cache,
-    link: concat(errorLink, authLink, retryLink, httpLink)
-  })
+  const link = ApolloLink.from([
+    errorLink,
+    authLink,
+    retryLink,
+    httpLink
+  ])
+
+  const client = new ApolloClient({ cache, link })
 
   return client
 }

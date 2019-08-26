@@ -28,7 +28,7 @@ const handleSubmit = (values, { props, setFieldError }) => {
     props.history.push('/login')
   }).catch(({ graphQLErrors }) => {
     const message = graphQLErrors.map(error => error.message).join(', ')
-    console.log(graphQLErrors)
+
     setFieldError('email', message)
   })
 }

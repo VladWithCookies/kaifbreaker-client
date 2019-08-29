@@ -1,34 +1,75 @@
 import Cookies from 'js-cookie'
-import { HttpLink } from 'apollo-link-http'
-import { onError } from 'apollo-link-error'
 import { ApolloClient } from 'apollo-client'
+import { ApolloLink } from 'apollo-link'
+import QueueLink from 'apollo-link-queue'
+import { HttpLink } from 'apollo-link-http'
+import { RetryLink } from 'apollo-link-retry'
+import { onError } from 'apollo-link-error'
 import { setContext } from 'apollo-link-context'
+import SerializingLink from 'apollo-link-serialize'
+import { CachePersistor } from 'apollo-cache-persist'
 import { InMemoryCache } from 'apollo-cache-inmemory'
 
 const API_HOST = 'http://localhost:3000/graphql'
-const httpLink = new HttpLink({ uri: API_HOST })
+const SCHEMA_VERSION = '1'
+const SCHEMA_VERSION_KEY = 'apollo-schema-version'
 
-const authLink = setContext(({ headers }) => {
-  const token = Cookies.get('token')
+const getApolloClient = async () => {
+  const httpLink = new HttpLink({ uri: API_HOST })
+  const retryLink = new RetryLink({ attempts: { max: Infinity } })
 
-  return {
-    headers: {
-      ...headers,
-      Authorization: token ? `Bearer ${token}` : ''
+  const authLink = setContext(({ headers }) => {
+    const token = Cookies.get('token')
+
+    return {
+      headers: {
+        ...headers,
+        Authorization: token ? `Bearer ${token}` : ''
+      }
     }
+  })
+
+  const errorLink = onError(({ networkError }) => {
+    if (networkError && networkError.statusCode === 401) {
+      Cookies.remove('token')
+      window.location.replace('/login')
+    }
+  })
+
+  const queueLink = new QueueLink()
+  const serializingLink = new SerializingLink()
+
+  const link = ApolloLink.from([
+    queueLink,
+    serializingLink,
+    retryLink,
+    errorLink,
+    authLink,
+    httpLink
+  ])
+
+  const cache = new InMemoryCache()
+
+  const persistor = new CachePersistor({
+    cache,
+    storage: window.localStorage,
+  })
+
+  const currentVersion = await window.localStorage.getItem(SCHEMA_VERSION_KEY)
+
+  if (currentVersion === SCHEMA_VERSION) {
+    await persistor.restore();
+  } else {
+    await persistor.purge()
+    await window.localStorage.setItem(SCHEMA_VERSION_KEY, SCHEMA_VERSION)
   }
-})
 
-const errorLink = onError(({ networkError }) => {
-  if (networkError && networkError.statusCode === 401) {
-    Cookies.remove('token')
-    window.location.replace('/login')
-  }
-})
+  const client = new ApolloClient({
+    link,
+    cache,
+  })
 
-const client = new ApolloClient({
-  cache: new InMemoryCache(),
-  link: errorLink.concat(authLink.concat(httpLink))
-})
+  return client
+}
 
-export default client
+export default getApolloClient

@@ -3,11 +3,11 @@ import { Field } from 'formik'
 import { Add } from '@material-ui/icons'
 import { Dialog, Fab, Container, Button, FormControlLabel, Switch } from '@material-ui/core'
 
-import DateTime from '../../../components/Inputs/DateTime'
+import DateField from '../../../components/Fields/DateField'
 import TextField from '../../../components/Fields/TextField'
 import useStyles from './styles'
 
-export default function({ isOpen, onOpen, onClose, handleSubmit, values }) {
+export default function({ isOpen, onOpen, onClose, handleSubmit }) {
   const classes = useStyles()
 
   return (
@@ -44,7 +44,12 @@ export default function({ isOpen, onOpen, onClose, handleSubmit, values }) {
               component={TextField}
               multiline
             />
-            <DateTime />
+            <Field
+              id='deadline'
+              name='deadline'
+              label='Дедлайн'
+              component={DateField}
+            />
             <FormControlLabel
               control={<Switch />}
               label='Публичный'

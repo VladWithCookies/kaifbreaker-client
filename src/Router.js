@@ -1,5 +1,5 @@
 import React from 'react'
-import { Switch, BrowserRouter } from 'react-router-dom'
+import { Switch, HashRouter } from 'react-router-dom'
 
 import PrivateRoute from './components/PrivateRoute'
 import GuestRoute from './components/GuestRoute'
@@ -11,7 +11,7 @@ import ProjectDetails from './screens/ProjectDetails'
 
 export default function Router() {
   return (
-    <BrowserRouter>
+    <HashRouter basename='/'>
       <Switch>
         <GuestRoute exact path='/signup' component={Signup} />
         <GuestRoute exact path='/login' component={Login} />
@@ -20,6 +20,6 @@ export default function Router() {
         <PrivateRoute exact path='/project-explorer' component={ProjectExplorer} />
         <PrivateRoute exact path='/project-details' component={ProjectDetails} />
       </Switch>
-    </BrowserRouter>
+    </HashRouter>
   )
 }

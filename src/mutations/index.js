@@ -1,4 +1,5 @@
 import createUser from './createUser'
 import signInUser from './signInUser'
+import createProject from './createProject'
 
-export { createUser, signInUser }
+export { createUser, signInUser, createProject }

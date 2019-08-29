@@ -5,7 +5,7 @@ import { Card, CardHeader, ButtonBase } from '@material-ui/core'
 import Project from '../../../components/Project'
 import useStyles from './styles'
 
-function ProjectItem({ history }) {
+function ProjectItem({ history, title }) {
   const classes = useStyles()
 
   return (
@@ -15,7 +15,7 @@ function ProjectItem({ history }) {
         onClick={() => history.push('/project-details')}
       >
         <CardHeader
-          title='Название тудулиста'
+          title={title}
           className={classes.header}
         />
       </ButtonBase>

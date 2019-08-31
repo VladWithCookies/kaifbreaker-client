@@ -1,9 +1,11 @@
 import React, { useState } from 'react'
 import { withFormik } from 'formik'
 import { compose, graphql } from 'react-apollo'
+import dayjs from 'dayjs'
 
 import { getProjects } from '../../../queries'
 import { createProject } from '../../../mutations'
+import validationSchema from './validations'
 import NewProjectModalComponent from './component'
 
 function NewProjectModal(props) {
@@ -38,6 +40,7 @@ const handleSubmit = (values, { props }) => {
       createProject: {
         id: -1,
         __typename: 'Project',
+        createdAt: dayjs().toString(),
         ...values,
       },
     },
@@ -50,11 +53,11 @@ const handleSubmit = (values, { props }) => {
 const mapPropsToValues = () => ({
   title: '',
   description: '',
-  deadline: '',
+  deadline: dayjs().add(1, 'week').toString(),
   public: false
 })
 
 export default compose(
   graphql(createProject),
-  withFormik({ handleSubmit, mapPropsToValues })
+  withFormik({ handleSubmit, mapPropsToValues, validationSchema })
 )(NewProjectModal)

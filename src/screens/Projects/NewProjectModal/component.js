@@ -1,10 +1,11 @@
 import React from 'react'
 import { Field } from 'formik'
 import { Add } from '@material-ui/icons'
-import { Dialog, Fab, Container, Button, FormControlLabel, Switch } from '@material-ui/core'
+import { Dialog, Fab, Container, Button } from '@material-ui/core'
 
 import DateField from '../../../components/Fields/DateField'
 import TextField from '../../../components/Fields/TextField'
+import ToggleField from '../../../components/Fields/ToggleField'
 import useStyles from './styles'
 
 export default function({ isOpen, onOpen, onClose, handleSubmit }) {
@@ -50,9 +51,11 @@ export default function({ isOpen, onOpen, onClose, handleSubmit }) {
               label='Дедлайн'
               component={DateField}
             />
-            <FormControlLabel
-              control={<Switch />}
+            <Field
+              id='public'
+              name='public'
               label='Публичный'
+              component={ToggleField}
             />
             <div className={classes.actions}>
               <Button

@@ -11,7 +11,6 @@ export default function DateTimeInput({ label, name, value, onChange, onBlur }) 
     <div className={classes.container}>
       <MuiPickersUtilsProvider utils={DateUtils}>
         <DateTimePicker
-          clearable
           disablePast
           name={name}
           label={label}

@@ -8,7 +8,7 @@ import './index.css'
 
 // TOOD: extract to another file
 const config = {
-  messagingSenderId: '995810719629'
+  messagingSenderId: '685080311493'
 }
 
  firebase.initializeApp(config)

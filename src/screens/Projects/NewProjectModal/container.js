@@ -12,7 +12,10 @@ function NewProjectModal(props) {
   const [isOpen, setIsOpen] = useState(false)
 
   useEffect(() => {
-    if (props.submitCount > 0) setIsOpen(false)
+    if (props.status === 'submitted') {
+      setIsOpen(false)
+      props.setStatus(null)
+    }
   })
 
   const handleToggleModal = () => {
@@ -29,8 +32,8 @@ function NewProjectModal(props) {
   )
 }
 
-const handleSubmit = (values, { props }) => {
-  const { mutate, setSubmitting } = props
+const handleSubmit = (values, { props, setSubmitting, setStatus, resetForm }) => {
+  const { mutate } = props
 
   mutate({
     variables: values,
@@ -55,6 +58,8 @@ const handleSubmit = (values, { props }) => {
   })
 
   setSubmitting(false)
+  resetForm()
+  setStatus('submitted')
 }
 
 const mapPropsToValues = () => ({

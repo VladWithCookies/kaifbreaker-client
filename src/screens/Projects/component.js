@@ -12,7 +12,7 @@ export default function Projects({ data: { projects = [] } }) {
 
   return (
     <Container className={classes.container}>
-      {projects.map((project) => <ProjectItem key={project.id} {...project} />)}
+      {projects.map((project) => <ProjectItem key={project.id} project={project} />)}
       {isEmpty(projects) && <EmptyState />}
       <NewProjectModal />
     </Container>

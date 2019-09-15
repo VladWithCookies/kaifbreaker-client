@@ -3,15 +3,14 @@ import { withRouter } from 'react-router'
 
 import ProjectItemComponent from './component'
 
-function ProjectItem({ id, title, history }) {
+function ProjectItem({ project, history }) {
   const handleShowDetails = () => {
-    history.push(`/projects/${id}`)
+    history.push(`/projects/${project.id}`)
   }
 
   return (
     <ProjectItemComponent
-      id={id}
-      title={title}
+      project={project}
       onShowDetails={handleShowDetails}
     />
   )

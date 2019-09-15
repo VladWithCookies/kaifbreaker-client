@@ -4,13 +4,11 @@ import { List } from '@material-ui/core'
 import AddTaskModal from '../AddTaskModal'
 import Task from '../Task'
 
-export default function ({ id }) {
+export default function ({ id, tasks = [] }) {
   return (
     <React.Fragment>
       <List>
-        <Task />
-        <Task />
-        <Task />
+        {tasks.map(task => <Task key={task.id} {...task} />)}
       </List>
       <AddTaskModal projectId={id} />
     </React.Fragment>

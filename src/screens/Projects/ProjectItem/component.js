@@ -4,7 +4,7 @@ import { Card, CardHeader, ButtonBase } from '@material-ui/core'
 import Project from '../../../components/Project'
 import useStyles from './styles'
 
-function ProjectItem({ id, title, onShowDetails }) {
+function ProjectItem({ project, onShowDetails }) {
   const classes = useStyles()
 
   return (
@@ -14,11 +14,11 @@ function ProjectItem({ id, title, onShowDetails }) {
         onClick={onShowDetails}
       >
         <CardHeader
-          title={title}
+          title={project.title}
           className={classes.header}
         />
       </ButtonBase>
-      <Project id={id} />
+      <Project {...project} />
     </Card>
   )
 }

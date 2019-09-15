@@ -7,7 +7,11 @@ export default graphql`
       title,
       public,
       deadline,
-      description
+      description,
+      tasks {
+        id,
+        content
+      }
     }
   }
 `

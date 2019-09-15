@@ -18,7 +18,7 @@ export default function Router() {
 
         <PrivateRoute exact path='/' component={Projects} />
         <PrivateRoute exact path='/project-explorer' component={ProjectExplorer} />
-        <PrivateRoute exact path='/project-details' component={ProjectDetails} />
+        <PrivateRoute exact path='/projects/:id' component={ProjectDetails} />
       </Switch>
     </BrowserRouter>
   )

@@ -24,7 +24,7 @@ const handleSubmit = (values, { props, setFieldError }) => {
   }).then(({ data }) => {
     Cookies.set('token', data.signInUser.token)
     history.push('/')
-  }).catch(({ graphQLErrors }) => {
+  }).catch(({ graphQLErrors = [] }) => {
     const message = graphQLErrors.map(error => error.message).join(', ')
 
     setFieldError('api', message)

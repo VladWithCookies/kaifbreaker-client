@@ -9,6 +9,9 @@ export default graphql`
       deadline,
       createdAt,
       description,
+      tasks {
+        id
+      }
     }
   }
 `

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { withFormik } from 'formik'
 import { compose, graphql } from 'react-apollo'
 import dayjs from 'dayjs'
@@ -10,6 +10,10 @@ import NewProjectModalComponent from './component'
 
 function NewProjectModal(props) {
   const [isOpen, setIsOpen] = useState(false)
+
+  useEffect(() => {
+    if (props.submitCount > 0) setIsOpen(false)
+  })
 
   const handleToggleModal = () => {
     setIsOpen(!isOpen)
@@ -26,7 +30,7 @@ function NewProjectModal(props) {
 }
 
 const handleSubmit = (values, { props }) => {
-  const { mutate } = props
+  const { mutate, setSubmitting } = props
 
   mutate({
     variables: values,
@@ -41,6 +45,7 @@ const handleSubmit = (values, { props }) => {
         id: -1,
         __typename: 'Project',
         createdAt: dayjs().toString(),
+        tasks: [],
         ...values,
       },
     },
@@ -48,6 +53,8 @@ const handleSubmit = (values, { props }) => {
       serializationKey: 'CREATE_PROJECT',
     },
   })
+
+  setSubmitting(false)
 }
 
 const mapPropsToValues = () => ({

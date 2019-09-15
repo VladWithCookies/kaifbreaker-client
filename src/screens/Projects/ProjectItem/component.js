@@ -1,27 +1,26 @@
 import React from 'react'
-import { withRouter } from 'react-router'
 import { Card, CardHeader, ButtonBase } from '@material-ui/core'
 
 import Project from '../../../components/Project'
 import useStyles from './styles'
 
-function ProjectItem({ history, title }) {
+function ProjectItem({ id, title, onShowDetails }) {
   const classes = useStyles()
 
   return (
     <Card className={classes.card}>
       <ButtonBase
         className={classes.button}
-        onClick={() => history.push('/project-details')}
+        onClick={onShowDetails}
       >
         <CardHeader
           title={title}
           className={classes.header}
         />
       </ButtonBase>
-      <Project />
+      <Project id={id} />
     </Card>
   )
 }
 
-export default withRouter(ProjectItem)
+export default ProjectItem

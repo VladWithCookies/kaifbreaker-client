@@ -1,12 +1,13 @@
 import React from 'react'
-import { Container, Typography, Card, CardHeader, CardContent } from '@material-ui/core'
+import { Delete } from '@material-ui/icons'
+import { Container, Typography, Card, CardHeader, CardContent, Button } from '@material-ui/core'
 
 import Project from '../../components/Project'
 import BackNavigation from '../../components/BackNavigation'
 import RoundProgress from '../../components/RoundProgress'
 import useStyles from './styles'
 
-export default function ProjectDetails() {
+export default function ProjectDetails({ onDelete }) {
   const classes = useStyles()
 
   return (
@@ -32,6 +33,15 @@ export default function ProjectDetails() {
           <CardHeader title='Tasks' />
           <Project />
         </Card>
+        <Button
+          onClick={onDelete}
+          variant='contained'
+          color='secondary'
+          fullWidth
+        >
+          <Delete />
+          Delete
+        </Button>
       </Container>
     </React.Fragment>
   )

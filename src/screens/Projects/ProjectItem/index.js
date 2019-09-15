@@ -1,3 +1,3 @@
-import ProjectItem from './component'
+import ProjectItem from './container'
 
 export default ProjectItem

@@ -3,11 +3,14 @@ import { CardActions, ButtonBase } from '@material-ui/core'
 
 import useStyles from './styles'
 
-export default function AddItemButton({ caption }) {
+export default function AddItemButton({ caption, onClick }) {
   const classes = useStyles()
 
   return (
-    <ButtonBase className={classes.addButton}>
+    <ButtonBase
+      onClick={onClick}
+      className={classes.addButton}
+    >
       <CardActions>
         + {caption}
       </CardActions>

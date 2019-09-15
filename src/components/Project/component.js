@@ -1,10 +1,10 @@
 import React from 'react'
-
 import { List } from '@material-ui/core'
-import AddItemButton from '../AddItemButton'
+
+import AddTaskModal from '../AddTaskModal'
 import Task from '../Task'
 
-export default function() {
+export default function ({ id }) {
   return (
     <React.Fragment>
       <List>
@@ -12,7 +12,7 @@ export default function() {
         <Task />
         <Task />
       </List>
-      <AddItemButton caption='Добавить задачу' />
+      <AddTaskModal projectId={id} />
     </React.Fragment>
   )
 }

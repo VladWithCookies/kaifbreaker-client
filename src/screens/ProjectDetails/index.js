@@ -1,3 +1,3 @@
-import ProjectDetails from './component'
+import ProjectDetails from './container'
 
 export default ProjectDetails

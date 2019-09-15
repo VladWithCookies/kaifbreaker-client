@@ -1,3 +1,3 @@
-import BackNavigation from './component'
+import BackNavigation from './container'
 
 export default BackNavigation

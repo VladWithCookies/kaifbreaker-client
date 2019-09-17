@@ -10,7 +10,10 @@ import SerializingLink from 'apollo-link-serialize'
 import { CachePersistor } from 'apollo-cache-persist'
 import { InMemoryCache } from 'apollo-cache-inmemory'
 
-const API_HOST = 'http://localhost:3000/graphql'
+const API_HOST = process.env.NODE_ENV === 'production'
+  ? 'https://cryptic-bayou-76235.herokuapp.com/graphql'
+  : 'http://localhost:3000/graphql'
+
 const SCHEMA_VERSION = '1'
 const SCHEMA_VERSION_KEY = 'apollo-schema-version'
 

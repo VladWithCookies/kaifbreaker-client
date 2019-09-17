@@ -9,7 +9,7 @@ const useStyles = makeStyles({
     paddingTop: 76,
     paddingLeft: 20,
     paddingRight: 20,
-    paddingBottom: 50
+    paddingBottom: 76
   },
   card: {
     marginBottom: 20

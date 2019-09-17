@@ -5,7 +5,6 @@ const useStyles = makeStyles({
     opacity: 0.9
   },
   formContainer: {
-    padding: 100,
     height: '100vh'
   },
   form: {

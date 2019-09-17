@@ -17,6 +17,11 @@ https://developers.google.com/web/progressive-web-apps/
 ### Apollo client for react
 https://www.apollographql.com/docs/react/
 
+## Where was i stole this?
+https://medium.com/twostoryrobot/a-recipe-for-offline-support-in-react-apollo-571ad7e6f7f4
+https://codeburst.io/highly-functional-offline-applications-using-apollo-client-12885bd5f335
+https://habr.com/p/450504/
+
 ## Step 1. Native look
 ### App manifest
 https://developers.google.com/web/fundamentals/web-app-manifest/

@@ -116,8 +116,11 @@ We are using create-react-app, so we jsut need to change `serviceWorker.unregist
 Now all app files will be cached and app will be 'available' even without internet connection. But all requests from client will fails. So we need to implement ability to return latest fetched data when internet connection is lost. 
 
 ### Offline queries
-We use apollo client. Apollo client is requestiong and caching data. We need to save apollo cache somewhere to not lose it...
+We use apollo client. Apollo client is requestiong and caching data. We need to save fetched data somewhere to not fetch it again in next run. Local storage is applicable for this. So when we wiil fetch data with apollo, apollo will save it in his cache. After that we need to save apollo cache to local storage. Then in next run we will initilize apollo cache from cache stored in local storage. In this way we will achive offline content availability.
 
+We will use apollo-cache-persist for this perpose.
+
+https://blog.apollographql.com/announcing-apollo-cache-persist-cb05aec16325
 
 ### Offline mutations
 TODO

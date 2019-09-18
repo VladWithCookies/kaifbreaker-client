@@ -19,7 +19,9 @@ https://www.apollographql.com/docs/react/
 
 ## Where was i stole this?
 https://medium.com/twostoryrobot/a-recipe-for-offline-support-in-react-apollo-571ad7e6f7f4
+
 https://codeburst.io/highly-functional-offline-applications-using-apollo-client-12885bd5f335
+
 https://habr.com/p/450504/
 
 ## Step 1. Native look
@@ -103,11 +105,19 @@ My manifest file looks like this:
 ```
 
 ## Step 2. Offline first
+"The "offline first" — or "cache first" — pattern is the most popular strategy for serving content to the user. If a resource is cached and available offline, return it first before trying to download it from the server. If it isn’t in the cache already, download it and cache it for future usage." - From MDN
+
 ### Caching
-TODO
+We need to have ability to serve app files (js, html, css, images) when internet connection is absent. 
+So we need to implement service worker. Service worker should add latest app files to cache and return it whenever client needs it. 
+
+We are using create-react-app, so we jsut need to change `serviceWorker.unregister();` to `serviceWorker.register();` to use built in service worker.
+
+Now all app files will be cached and app will be 'available' even without internet connection. But all requests from client will fails. So we need to implement ability to return latest fetched data when internet connection is lost. 
 
 ### Offline queries
-TODO
+We use apollo client. Apollo client is requestiong and caching data. We need to save apollo cache somewhere to not lose it...
+
 
 ### Offline mutations
 TODO

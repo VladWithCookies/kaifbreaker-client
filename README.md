@@ -1,55 +1,56 @@
-# PWA using React & Apollo Client
+# PWA используя React & Apollo Client
 
-## What we want to build
+## Что мы хотим сделать?
 
-Web application with better mobile expirience. It should behave more like native mobile apps. 
+Хотим сделать веб-приложение которые бы максимально походило на нативное.
 
-So we need to have ability to:
-* Run app from icon on the screen
-* Run app in own window
-* Use app without internet 
-* Receive notifications even when app is not running
+Хотим чтобы оно могло:
+* Запускаться с иконки на домашнем экране
+* Работать в отдельном окне
+* Работать без подключения к сети
+* Отправлять пуш нотификации
 
-## What we will use 
+## Что будем использовать
 ### PWA
 https://developers.google.com/web/progressive-web-apps/
 
-### Apollo client for react
+### Apollo client под react
 https://www.apollographql.com/docs/react/
 
-## Where was i stole this?
+## Где я украл это подход? (Ну не сам же я его придумал)
 https://medium.com/twostoryrobot/a-recipe-for-offline-support-in-react-apollo-571ad7e6f7f4
 
 https://codeburst.io/highly-functional-offline-applications-using-apollo-client-12885bd5f335
 
 https://habr.com/p/450504/
 
-## Step 1. Native look
+## Шаг 1. Выглядеть как нативное приложение
 ### App manifest
+
 https://developers.google.com/web/fundamentals/web-app-manifest/
 
-Some of useful app manifest options:
+Важные для нас опции app manifest:
 
-`name` - is used in the app install prompt
+`name` - название приложения, которое будет показано при запросе на добавление иконки на домашний экран 
 
-`short_name` - is used on the user's home screen, launcher, or other places where space may be limited
+`short_name` - короткое название приложения. Его можно будет увидеть на домашнем экране, ну или там где места маловато для полного названия
 
-`background_color` - used on the user's home screen, launcher, or other places where space may be limited
+`background_color` - цвет загрузочного экрана
 
-`display` - customize what browser UI is shown when your app is launched. I've choosed `standalone`. `standalone` means that:
+`display` - может принимать несколько значений. кастомизирует ui браузера. Я выбрал `standalone`. `standalone` значит что:
 
-* It runs in its own window, separate from the browser.
-* It hides standard browser UI elements like the URL bar, etc.
+* Приложение будет запущено в отдельном окне, независимо от браузера.
+* Стандартный ui браузера будет спрятан. Например строка ввода url
 
-`scope` - defines the set of URLs that the browser considers to be within your app, and is used to decide when the user has left the app.
+`scope` - скоуп урлов нашего приложения, используюется чтобы понять, когда пользователь покинул приложение.
 
-`start_url` - is url where your application should start when it is launched, and prevents the app from starting on whatever page the user was on when they added your app to their home screen.
+`start_url` - урл с которого приложение стартует. полезно для того чтобы юезр открывал нужную нам страницу кликая по иконке на домашнем экране, а не ту на которой он добавил эту иконку на домашний экран
 
-`theme_color` - sets the color of the tool bar, and may be reflected in the app's preview in task switchers.
+`theme_color` - цвет тул бара
 
-`icons` - is set of icons for the browser to use. These icons are used in places like the home screen, app launcher, task switcher, splash screen, etc.
+`icons` - набор иконок которые будут юзаться на домашнем экране, app launcher, task switcher, загрузочном экране, итд.
 
-My manifest file looks like this:
+У меня получился такой манифест:
 ```json
 {
   "name": "КАЙФОЛОМ",
@@ -105,25 +106,24 @@ My manifest file looks like this:
 ```
 
 ## Step 2. Offline first
-"The "offline first" — or "cache first" — pattern is the most popular strategy for serving content to the user. If a resource is cached and available offline, return it first before trying to download it from the server. If it isn’t in the cache already, download it and cache it for future usage." - From MDN
+Offline first или cache first - это такая популярная стратегия доставки контента юзеру. Суть в том что если ресурс закеширован и доступен офлайн, то мы в первую очереди будем возвращать ресурс и кеша при попытке скачать его с сервера. Если в кеше ресурса нет, то мы скачаем его с сервера, а потом добавим в кеш. Цикл замкнулся.
 
-### Caching
-We need to have ability to serve app files (js, html, css, images) when internet connection is absent. 
-So we need to implement service worker. Service worker should add latest app files to cache and return it whenever client needs it. 
+### Кещирование 
+Чтобы приложение можно было открыть без доступа к сети, нужно чтобы его файлы (js, html, css, картиночки) были в кеше. Это решается с помошью сервис воркера. Нам нужно написать сервис воркер который бы добавлял эти файлы в кеш и отдавал их юзеру из кеша когда они будут нужны ему.
 
-We are using create-react-app, so we jsut need to change `serviceWorker.unregister();` to `serviceWorker.register();` to use built in service worker.
+Я использовал create-react-app, а там уже был встроенный сервис воркер, поэтому для меня все обошлось тем, что я просто поменял`serviceWorker.unregister();` на `serviceWorker.register();`в `index.js`
 
-Now all app files will be cached and app will be 'available' even without internet connection. But all requests from client will fails. So we need to implement ability to return latest fetched data when internet connection is lost. 
+Файлы теперь кешируются и мы можем использовать приложение без подключения к сети. Не то чтобы прям использовать, потому что все запросы к серверу будут падать, так как подключения к сети нет. Сейчас мы разве что можем просматривать статические страници, что не очень интересно.
 
-### Offline queries
-We use apollo client. Apollo client is requestiong and caching data. We need to save fetched data somewhere to not fetch it again in next run. Local storage is applicable for this. So when we wiil fetch data with apollo, apollo will save it in his cache. After that we need to save apollo cache to local storage. Then in next run we will initilize apollo cache from cache stored in local storage. In this way we will achive offline content availability.
+### Оффлайн запросы
+Суть в том что apollo записывает ответы от сервера в свой кеш. Можно взять и записать этот кеш куда-нибудь (я имею ввиду local storage), так чтобы его не потерять. Затем при старте приложения достать кеш из локал стореджа и инициализировать им кеш apollo. Цикл замкнулся. Таким образом у нас будут данные чтобы показать пользователю, когда соеденение пропало.
 
-We will use apollo-cache-persist for this perpose.
+Для этой цели буде полезен `apollo-cache-persist`
 
 https://blog.apollographql.com/announcing-apollo-cache-persist-cb05aec16325
 
-### Offline mutations
+### Офлайн мутации (звучит жутко)
 TODO
 
-## Step 3. Push notifications
+## Step 3. Пуш нотификации
 TODO

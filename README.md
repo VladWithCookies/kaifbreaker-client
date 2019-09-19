@@ -122,6 +122,101 @@ Offline first или cache first - это такая популярная стр
 
 https://blog.apollographql.com/announcing-apollo-cache-persist-cb05aec16325
 
+Добавляю `apollo-cache-persist`
+```js
+// src/apolloClient.js
+import { ApolloClient } from 'apollo-client'
+import { HttpLink } from 'apollo-link-http'
+import { CachePersistor } from 'apollo-cache-persist'
+import { InMemoryCache } from 'apollo-cache-inmemory'
+
+const API_HOST = 'http://localhost:3000/graphql'
+
+const SCHEMA_VERSION = '1'
+const SCHEMA_VERSION_KEY = 'apollo-schema-version'
+
+const getApolloClient = async () => {
+  const httpLink = new HttpLink({ uri: API_HOST })
+  const cache = new InMemoryCache()
+
+  const persistor = new CachePersistor({
+    cache,
+    storage: window.localStorage,
+  })
+
+  const currentVersion = window.localStorage.getItem(SCHEMA_VERSION_KEY)
+
+  if (currentVersion === SCHEMA_VERSION) {
+    await persistor.restore()
+  } else {
+    await persistor.purge()
+    window.localStorage.setItem(SCHEMA_VERSION_KEY, SCHEMA_VERSION)
+  }
+
+  const client = new ApolloClient({
+    httpLink,
+    cache,
+  })
+
+  return client
+}
+
+export default getApolloClient
+```
+
+Добавляю лоадер чтобы показывать его пока кеш apollo инициализируется кешем из local storage.
+```js
+// src/components/App/container.js
+
+import React, { useEffect, useState } from 'react'
+
+import getApolloClient from '../../apolloClient'
+import AppComponent from './component'
+
+export default function App() {
+  const [client, setClient] = useState(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    getApolloClient().then((client) => {
+      setClient(client)
+      setLoading(false)
+    })
+  }, [])
+
+  return <AppComponent client={client} loading={loading} />
+}
+```
+
+```js
+/src/components/App/component.js
+
+import React from 'react'
+import { ApolloProvider } from 'react-apollo'
+
+import Loader from '../Loader'
+import Router from '../../Router'
+import useStyles from './styles'
+
+export default function App({ client, loading }) {
+  const classes = useStyles()
+
+  if (loading) {
+    return (
+      <div className={classes.loaderContainer}>
+        <Loader />
+      </div>
+    )
+  }
+
+  return (
+    <ApolloProvider client={client}>
+      <Router />
+    </ApolloProvider>
+  )
+}
+```
+
 ### Офлайн мутации (звучит жутко)
 TODO
 

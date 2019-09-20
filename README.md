@@ -17,7 +17,7 @@ https://developers.google.com/web/progressive-web-apps/
 ### Apollo client под react
 https://www.apollographql.com/docs/react/
 
-## Где я украл это подход? (Ну не сам же я его придумал)
+## Где я украл этот подход? (Ну не сам же я его придумал)
 https://medium.com/twostoryrobot/a-recipe-for-offline-support-in-react-apollo-571ad7e6f7f4
 
 https://codeburst.io/highly-functional-offline-applications-using-apollo-client-12885bd5f335
@@ -108,7 +108,7 @@ https://developers.google.com/web/fundamentals/web-app-manifest/
 ## Step 2. Offline first
 Offline first или cache first - это такая популярная стратегия доставки контента юзеру. Суть в том что если ресурс закеширован и доступен офлайн, то мы в первую очереди будем возвращать ресурс и кеша при попытке скачать его с сервера. Если в кеше ресурса нет, то мы скачаем его с сервера, а потом добавим в кеш. Цикл замкнулся.
 
-### Кещирование 
+### Кеширование 
 Чтобы приложение можно было открыть без доступа к сети, нужно чтобы его файлы (js, html, css, картиночки) были в кеше. Это решается с помошью сервис воркера. Нам нужно написать сервис воркер который бы добавлял эти файлы в кеш и отдавал их юзеру из кеша когда они будут нужны ему.
 
 Я использовал create-react-app, а там уже был встроенный сервис воркер, поэтому для меня все обошлось тем, что я просто поменял`serviceWorker.unregister();` на `serviceWorker.register();`в `index.js`
@@ -116,7 +116,7 @@ Offline first или cache first - это такая популярная стр
 Файлы теперь кешируются и мы можем использовать приложение без подключения к сети. Не то чтобы прям использовать, потому что все запросы к серверу будут падать, так как подключения к сети нет. Сейчас мы разве что можем просматривать статические страници, что не очень интересно.
 
 ### Оффлайн запросы
-Суть в том что apollo записывает ответы от сервера в свой кеш. Можно взять и записать этот кеш куда-нибудь (я имею ввиду local storage), так чтобы его не потерять. Затем при старте приложения достать кеш из локал стореджа и инициализировать им кеш apollo. Цикл замкнулся. Таким образом у нас будут данные чтобы показать пользователю, когда соеденение пропало.
+Нужно сделать так чтобы при отсутствии подключения к сети пользователь мог увидеть тот контент который уже был загружен им ранее. Тут снова все решается кешированием. Только на этот раз не файлов приложения, а ответов от сервера. Суть в том что apollo уже записывает ответы от сервера в свой кеш. Звучит как будто все уже работает. Но если мы перезагрузим страницу то все сломается. Он (кеш) испарился!! (скрин с фильма про бэтмена, где джокер показывает фокус с карандашом). Можно взять и записать этот кеш куда-нибудь (я имею ввиду local storage), так чтобы его не потерять. Затем при старте приложения достать кеш из локал стореджа и инициализировать им кеш apollo. Цикл замкнулся. Таким образом у нас будут данные чтобы показать пользователю, когда соеденение пропало.
 
 Для этой цели буде полезен `apollo-cache-persist`
 
@@ -164,7 +164,7 @@ const getApolloClient = async () => {
 export default getApolloClient
 ```
 
-Добавляю лоадер чтобы показывать его пока кеш apollo инициализируется кешем из local storage.
+Добавляю лоадер чтобы показывать его юзеру пока кеш apollo инициализируется кешем из local storage (на самомо деле делается это довольно быстро и лоадер особо даже и не поразглядываешь, но мало ли)
 ```js
 // src/components/App/container.js
 
@@ -218,7 +218,107 @@ export default function App({ client, loading }) {
 ```
 
 ### Офлайн мутации (звучит жутко)
-TODO
+Уже лучше, но а что если я хочу не просто просматривать последние полученные данные, а попытаться к примеру запостить какой-то пост или добавить таску в тудулист, а интернета нет. По хорошему нужно сделать так чтобы я мог это сделать без подключения к сети. То есть при создании поста, таски показать юзеру что все ок, вот твоя таска, пост, а когда будет интернет я ее еще и на сервер отправлю.
+
+Начнем с того чтобы сказать юзеру что все ок:
+В apollo уже есть механизм который позволяет это сделать. Называется optimistic response. Суть в том что мы можем показать пользователь какой-то ответ еще до того как реальный ответ прийдет с сервера. А когда настоящий ответ прийдет, то apollo обновит кеш реальными данными.
+
+Примерчик с optimistic response (надо его порезать чутка, выпилить formik и прочее что не очень важно в данном контексте):
+
+```
+import React, { useState, useEffect } from 'react'
+import { withFormik } from 'formik'
+import { compose, graphql } from 'react-apollo'
+import dayjs from 'dayjs'
+
+import { getProjects } from '../../../queries'
+import { createProject } from '../../../mutations'
+import validationSchema from './validations'
+import NewProjectModalComponent from './component'
+
+function NewProjectModal(props) {
+  const [isOpen, setIsOpen] = useState(false)
+
+  useEffect(() => {
+    if (props.status === 'submitted') {
+      setIsOpen(false)
+      props.setStatus(null)
+    }
+  })
+
+  const handleToggleModal = () => {
+    setIsOpen(!isOpen)
+  }
+
+  return (
+    <NewProjectModalComponent
+      {...props}
+      isOpen={isOpen}
+      onOpen={handleToggleModal}
+      onClose={handleToggleModal}
+    />
+  )
+}
+
+const handleSubmit = (values, { props, setSubmitting, setStatus, resetForm }) => {
+  const { mutate } = props
+
+  mutate({
+    variables: values,
+    update: (cache, { data: { createProject } }) => {
+      const data = cache.readQuery({ query: getProjects })
+
+      data.projects.push(createProject)
+      cache.writeQuery({ query: getProjects, data })
+    },
+    optimisticResponse: {
+      createProject: {
+        id: -1,
+        __typename: 'Project',
+        createdAt: dayjs().toString(),
+        tasks: [],
+        ...values,
+      },
+    },
+    context: {
+      serializationKey: 'CREATE_PROJECT',
+    },
+  })
+
+  setSubmitting(false)
+  resetForm()
+  setStatus('submitted')
+}
+
+const mapPropsToValues = () => ({
+  title: '',
+  description: '',
+  deadline: dayjs().add(1, 'week').toString(),
+  public: false
+})
+
+export default compose(
+  graphql(createProject),
+  withFormik({ handleSubmit, mapPropsToValues, validationSchema })
+)(NewProjectModal)
+```
+
+А что дальше ? Тут у нас будет целое комбо из библиотек:
+*  apollo-link-retry (https://www.apollographql.com/docs/link/links/retry/)
+*  apollo-link-queue (https://github.com/helfer/apollo-link-queue)
+*  apollo-link-serialize (https://github.com/helfer/apollo-link-serialize)
+*
+
+Ничего себе, давайте по порядку:
+
+Начнем с понимания такой штуки как apollo link.
+Apollo link - способ для того чтобы создать флоу каких-то действий вокруг данных с которыми работает graphql. TODO
+
+`apollo-http-link`-
+
+`apollo-retry-link`-
+
+(схема)
 
 ## Step 3. Пуш нотификации
 TODO

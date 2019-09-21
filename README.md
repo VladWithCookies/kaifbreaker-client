@@ -361,6 +361,10 @@ const getApolloClient = async () => {
   })
 
   const queueLink = new QueueLink()
+  
+  window.addEventListener('offline', () => queueLink.close())
+  window.addEventListener('online', () => queueLink.open())
+
   const serializingLink = new SerializingLink()
 
   const link = ApolloLink.from([

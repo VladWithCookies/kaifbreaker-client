@@ -122,9 +122,8 @@ Offline first или cache first - это такая популярная стр
 
 https://blog.apollographql.com/announcing-apollo-cache-persist-cb05aec16325
 
-Добавляю `apollo-cache-persist`
+Пример, который нужно будет проверить на работоспособность
 ```js
-// src/apolloClient.js
 import { ApolloClient } from 'apollo-client'
 import { HttpLink } from 'apollo-link-http'
 import { CachePersistor } from 'apollo-cache-persist'
@@ -166,8 +165,6 @@ export default getApolloClient
 
 Добавляю лоадер чтобы показывать его юзеру пока кеш apollo инициализируется кешем из local storage (на самомо деле делается это довольно быстро и лоадер особо даже и не поразглядываешь, но мало ли)
 ```js
-// src/components/App/container.js
-
 import React, { useEffect, useState } from 'react'
 
 import getApolloClient from '../../apolloClient'
@@ -189,7 +186,7 @@ export default function App() {
 ```
 
 ```js
-/src/components/App/component.js
+//src/components/App/component.js
 
 import React from 'react'
 import { ApolloProvider } from 'react-apollo'
@@ -225,7 +222,7 @@ export default function App({ client, loading }) {
 
 Примерчик с optimistic response (надо его порезать чутка, выпилить formik и прочее что не очень важно в данном контексте):
 
-```
+```js
 import React, { useState, useEffect } from 'react'
 import { withFormik } from 'formik'
 import { compose, graphql } from 'react-apollo'
@@ -303,22 +300,104 @@ export default compose(
 )(NewProjectModal)
 ```
 
-А что дальше ? Тут у нас будет целое комбо из библиотек:
+А что дальше? Мы показали пользователю optimistic response, но нужно еще отправить его запрос, когда это будет возможно. Тут у нас будет целое комбо из библиотек:
 *  apollo-link-retry (https://www.apollographql.com/docs/link/links/retry/)
 *  apollo-link-queue (https://github.com/helfer/apollo-link-queue)
 *  apollo-link-serialize (https://github.com/helfer/apollo-link-serialize)
-*
 
 Ничего себе, давайте по порядку:
 
 Начнем с понимания такой штуки как apollo link.
-Apollo link - способ для того чтобы создать флоу каких-то действий вокруг данных с которыми работает graphql. TODO
 
-`apollo-http-link`-
+https://www.apollographql.com/docs/link/overview/
 
-`apollo-retry-link`-
+1. `apollo-link-retry` - название говорит само за себя, эта линка при вознекновении ошибки сети попытается послать запрос еще раз через определенное время.
 
-(схема)
+2. `apollo-link-queue` - как написано в ее readme: это как ворота, когда интернета нет, запросы собираются в очередь, пока ворота не откроються.
+
+3. `apollo-link-serialize` - фиксит одну забавную фичу apollo, которая нас может напрягать при использовании `apollo-link-queue`. Дело в том что apolllo екзекуть квери и мутации паралельно, а значит если мы выполнели две мутации в оффлайне модет, например создали что-то, а потом удалили, то когда соеденение вернеться то эти мутации отработат одновременно, что может привести к ошибкам. 
+
+Пример для всего и сразу, который нужно декомпозировать, возможно
+```js
+import Cookies from 'js-cookie'
+import { ApolloClient } from 'apollo-client'
+import { ApolloLink } from 'apollo-link'
+import QueueLink from 'apollo-link-queue'
+import { HttpLink } from 'apollo-link-http'
+import { RetryLink } from 'apollo-link-retry'
+import { onError } from 'apollo-link-error'
+import { setContext } from 'apollo-link-context'
+import SerializingLink from 'apollo-link-serialize'
+import { CachePersistor } from 'apollo-cache-persist'
+import { InMemoryCache } from 'apollo-cache-inmemory'
+
+const API_HOST = process.env.NODE_ENV === 'production'
+  ? 'https://cryptic-bayou-76235.herokuapp.com/graphql'
+  : 'http://localhost:3000/graphql'
+
+const SCHEMA_VERSION = '1'
+const SCHEMA_VERSION_KEY = 'apollo-schema-version'
+
+const getApolloClient = async () => {
+  const httpLink = new HttpLink({ uri: API_HOST })
+  const retryLink = new RetryLink({ attempts: { max: Infinity } })
+
+  const authLink = setContext(({ headers }) => {
+    const token = Cookies.get('token')
+
+    return {
+      headers: {
+        ...headers,
+        Authorization: token ? `Bearer ${token}` : ''
+      }
+    }
+  })
+
+  const errorLink = onError(({ networkError }) => {
+    if (networkError && networkError.statusCode === 401) {
+      Cookies.remove('token')
+      window.location.replace('/login')
+    }
+  })
+
+  const queueLink = new QueueLink()
+  const serializingLink = new SerializingLink()
+
+  const link = ApolloLink.from([
+    queueLink,
+    serializingLink,
+    retryLink,
+    errorLink,
+    authLink,
+    httpLink
+  ])
+
+  const cache = new InMemoryCache()
+
+  const persistor = new CachePersistor({
+    cache,
+    storage: window.localStorage,
+  })
+
+  const currentVersion = await window.localStorage.getItem(SCHEMA_VERSION_KEY)
+
+  if (currentVersion === SCHEMA_VERSION) {
+    await persistor.restore();
+  } else {
+    await persistor.purge()
+    await window.localStorage.setItem(SCHEMA_VERSION_KEY, SCHEMA_VERSION)
+  }
+
+  const client = new ApolloClient({
+    link,
+    cache,
+  })
+
+  return client
+}
+
+export default getApolloClient
+```
 
 ## Step 3. Пуш нотификации
 TODO

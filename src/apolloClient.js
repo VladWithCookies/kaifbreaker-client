@@ -37,9 +37,42 @@ const getApolloClient = async () => {
   })
 
   const queueLink = new QueueLink()
+
+  window.addEventListener('offline', () => queueLink.close())
+  window.addEventListener('online', () => queueLink.open())
+
   const serializingLink = new SerializingLink()
 
+  const trackerLink = new ApolloLink((operation, forward) => {
+    if (!forward) return null
+
+    const context = operation.getContext()
+    const trackedQueries = JSON.parse(window.localStorage.getItem('trackedQueries') || null) || []
+
+    if (context.tracked !== undefined) {
+      const { operationName, query, variables } = operation
+
+      const newTrackedQuery = {
+        query,
+        context,
+        variables,
+        operationName,
+      }
+
+      window.localStorage.setItem('trackedQueries', JSON.stringify([...trackedQueries, newTrackedQuery]))
+    }
+
+    return forward(operation).map((data) => {
+      if (context.tracked !== undefined) {
+        window.localStorage.setItem('trackedQueries', trackedQueries)
+      }
+
+      return data
+    })
+  })
+
   const link = ApolloLink.from([
+    trackerLink,
     queueLink,
     serializingLink,
     retryLink,

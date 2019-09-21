@@ -11,6 +11,7 @@ export default graphql`
       tasks {
         id,
         content
+        projectId,
       }
     }
   }

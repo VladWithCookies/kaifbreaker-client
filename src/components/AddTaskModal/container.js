@@ -20,7 +20,7 @@ function AddTaskModal(props) {
       setIsOpen(false)
       props.setStatus(null)
     }
-  })
+  }, [props.status])
 
   return (
     <AddTaskModalComponent
@@ -56,6 +56,7 @@ const handleSubmit = (values, { props, setSubmitting, setStatus, resetForm }) =>
         id: -1,
         __typename: 'Task',
         createdAt: dayjs().toString(),
+        projectId,
         ...values,
       },
     },

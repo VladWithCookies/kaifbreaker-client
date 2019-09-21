@@ -16,7 +16,7 @@ function NewProjectModal(props) {
       setIsOpen(false)
       props.setStatus(null)
     }
-  })
+  }, [props.status])
 
   const handleToggleModal = () => {
     setIsOpen(!isOpen)

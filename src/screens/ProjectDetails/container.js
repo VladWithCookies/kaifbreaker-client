@@ -2,8 +2,8 @@ import React from 'react'
 import { withRouter } from 'react-router'
 import { graphql, compose } from 'react-apollo'
 
-import { getProjects } from '../../queries'
 import { deleteProject } from '../../mutations'
+import * as updateFunctions from '../../updateFunctions'
 import ProjectDetailsComponent from './component'
 
 function ProjectDetails({ mutate, match, history }) {
@@ -14,13 +14,15 @@ function ProjectDetails({ mutate, match, history }) {
       variables: {
         id
       },
-      update: (cache) => {
-        const data = cache.readQuery({ query: getProjects })
-
-        data.projects = data.projects.filter((project) => id !== project.id)
-        cache.writeQuery({ query: getProjects, data })
+      update: updateFunctions.deleteProject,
+      optimisticResponse: {
+        deleteProject: {
+          id,
+          __typename: 'Project',
+        },
       },
       context: {
+        tracked: true,
         serializationKey: 'DELETE_PROJECT',
       },
     })

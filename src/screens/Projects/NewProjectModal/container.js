@@ -4,7 +4,7 @@ import { compose, graphql } from 'react-apollo'
 import dayjs from 'dayjs'
 
 import { createProject } from '../../../mutations'
-import { createProject as update } from '../../../updateFunctions'
+import * as updateFunctions from '../../../updateFunctions'
 import validationSchema from './validations'
 import NewProjectModalComponent from './component'
 
@@ -36,8 +36,8 @@ const handleSubmit = (values, { props, setSubmitting, setStatus, resetForm }) =>
   const { mutate } = props
 
   mutate({
-    update,
     variables: values,
+    update: updateFunctions.createProject,
     optimisticResponse: {
       createProject: {
         id: -1,

@@ -3,8 +3,8 @@ import { withFormik } from 'formik'
 import { compose, graphql } from 'react-apollo'
 import dayjs from 'dayjs'
 
-import { getProjects } from '../../queries'
 import { createTask } from '../../mutations'
+import * as updateFunctions from '../../updateFunctions'
 import validationSchema from './validations'
 import AddTaskModalComponent from './component'
 
@@ -44,13 +44,7 @@ const handleSubmit = (values, { props, setSubmitting, setStatus, resetForm }) =>
       ...values,
       projectId,
     },
-    update: (cache, { data: { createTask } }) => {
-      const data = cache.readQuery({ query: getProjects })
-      const index = data.projects.findIndex(project => project.id === projectId)
-
-      data.projects[index].tasks.push(createTask)
-      cache.writeQuery({ query: getProjects, data })
-    },
+    update: updateFunctions.createTask,
     optimisticResponse: {
       createTask: {
         id: -1,
@@ -61,6 +55,7 @@ const handleSubmit = (values, { props, setSubmitting, setStatus, resetForm }) =>
       },
     },
     context: {
+      tracked: true,
       serializationKey: 'CREATE_TASK',
     }
   })

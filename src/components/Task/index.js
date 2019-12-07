@@ -1,3 +1,3 @@
-import Task from './component'
+import Task from './container'
 
 export default Task

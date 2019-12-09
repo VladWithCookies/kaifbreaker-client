@@ -403,7 +403,104 @@ const getApolloClient = async () => {
 export default getApolloClient
 ```
 
-Еще у меня есть странный, возможно рабочий код, который я стырил и немного передеалал. Суть в том, что можно записывать данные о мутациях в офлайне в локал сторедж, а при возвращении в онлайн доставать их оттуда, сделать на их основе новые мутации и запустить их, что по идеи должно стирать вовсе все грани между офлайн и онлайном.
+Еще у меня есть странный, который я стырил и немного передеалал. Суть в том, что можно записывать данные о мутациях в офлайне в локал сторедж, а при возвращении в онлайн доставать их оттуда, сделать на их основе новые мутации и запустить их, что по идеи должно стирать вовсе все грани между офлайн и онлайном.
+
+Нужно написать кастомный `link`
+```js
+ const trackerLink = new ApolloLink((operation, forward) => {
+    if (!forward) return null
+
+    const context = operation.getContext()
+    const trackedQueries = JSON.parse(window.localStorage.getItem('trackedQueries') || null) || []
+
+    if (context.tracked !== undefined) {
+      const { operationName, query, variables } = operation
+
+      const newTrackedQuery = {
+        query,
+        context,
+        variables,
+        operationName,
+      }
+
+      window.localStorage.setItem('trackedQueries', JSON.stringify([...trackedQueries, newTrackedQuery]))
+    }
+
+    return forward(operation).map((data) => {
+      if (context.tracked !== undefined) {
+        window.localStorage.setItem('trackedQueries', trackedQueries)
+      }
+
+      return data
+    })
+  })
+
+```
+
+Поставить его в цепочке линок вот тут:
+```js
+  const link = ApolloLink.from([
+    trackerLink,
+    queueLink,
+    serializingLink,
+    retryLink,
+    errorLink,
+    authLink,
+    httpLink
+  ])
+```
+
+Ну а потом достать данные о мутациях при инициализации компонента например. Вот так я сделал это прям в рутовом компоненте:
+
+```js
+import React, { useEffect, useState } from 'react'
+
+import * as updateFunctions from '../../updateFunctions'
+import getApolloClient from '../../apolloClient'
+import AppComponent from './component'
+
+export default function App() {
+  const [client, setClient] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [online, setOnline] = useState(true)
+
+  useEffect(() => {
+    getApolloClient().then((client) => {
+      setClient(client)
+      setLoading(false)
+    })
+  }, [])
+
+  useEffect(() => {
+    window.addEventListener('offline', () => setOnline(false))
+    window.addEventListener('online', () => setOnline(true))
+  }, [])
+
+  useEffect(() => {
+    if (!client || !online) return
+
+    const execute = async () => {
+      const trackedQueries = JSON.parse(window.localStorage.getItem('trackedQueries') || null) || []
+
+      const promises = trackedQueries.map(({ variables, query, context, operationName }) => client.mutate({
+        context,
+        variables,
+        mutation: query,
+        update: updateFunctions[operationName],
+        optimisticResponse: context.optimisticResponse,
+      }))
+
+      await Promise.all(promises)
+
+      window.localStorage.setItem('trackedQueries', [])
+    }
+
+    execute()
+  }, [client])
+
+  return <AppComponent client={client} loading={loading} />
+}
+```
 
 ## Step 3. Пуш нотификации
 Последнее, что я хотел рассказать это пуш нотификации. Я решил реализовать это используя `firebase`. Тут все довольно просто.

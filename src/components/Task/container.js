@@ -1,7 +1,7 @@
 import React from 'react'
 import { graphql } from 'react-apollo'
 
-import { getProjects } from '../../queries'
+import * as updateFunctions from '../../updateFunctions'
 import { deleteTask } from '../../mutations'
 import TaskComponent from './component'
 
@@ -13,11 +13,17 @@ function Task(props) {
       variables: {
         id,
       },
-      update: (cache) => {
-        // TODO
-      },
+      update: updateFunctions.deleteTask,
       context: {
+        tracked: true,
         serializationKey: 'DELETE_TASK',
+      },
+      optimisticResponse: {
+        deleteTask: {
+          id,
+          projectId,
+          __typename: 'Task',
+        },
       }
     })
   }

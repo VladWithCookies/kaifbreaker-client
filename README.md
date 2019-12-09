@@ -24,7 +24,7 @@ https://codeburst.io/highly-functional-offline-applications-using-apollo-client-
 
 https://habr.com/p/450504/
 
-## Шаг 1. Выглядеть как нативное приложение
+## Step 1. Выглядеть как нативное приложение
 ### App manifest
 
 https://developers.google.com/web/fundamentals/web-app-manifest/

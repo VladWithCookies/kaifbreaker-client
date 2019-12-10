@@ -41,7 +41,7 @@ export default function App() {
     }
 
     execute()
-  }, [client])
+  }, [client, online])
 
   return <AppComponent client={client} loading={loading} />
 }

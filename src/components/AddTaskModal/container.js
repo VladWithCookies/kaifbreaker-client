@@ -20,7 +20,7 @@ function AddTaskModal(props) {
       setIsOpen(false)
       props.setStatus(null)
     }
-  }, [props.status])
+  }, [props])
 
   return (
     <AddTaskModalComponent

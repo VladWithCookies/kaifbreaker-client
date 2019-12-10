@@ -10,6 +10,7 @@ export default graphql`
       description,
       tasks {
         id,
+        done,
         content
         projectId,
       }

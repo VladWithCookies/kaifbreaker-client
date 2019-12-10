@@ -428,7 +428,7 @@ export default getApolloClient
 
     return forward(operation).map((data) => {
       if (context.tracked !== undefined) {
-        window.localStorage.setItem('trackedQueries', trackedQueries)
+        window.localStorage.setItem('trackedQueries', JSON.stringify(trackedQueries))
       }
 
       return data

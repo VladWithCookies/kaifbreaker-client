@@ -47,7 +47,7 @@ const getApolloClient = async () => {
   const serializingLink = new SerializingLink()
 
   const trackerLink = new ApolloLink((operation, forward) => {
-    if (!forward) return null
+    if (forward === undefined) return null
 
     const context = operation.getContext()
     const trackedQueries = JSON.parse(window.localStorage.getItem('trackedQueries') || null) || []
@@ -67,7 +67,7 @@ const getApolloClient = async () => {
 
     return forward(operation).map((data) => {
       if (context.tracked !== undefined) {
-        window.localStorage.setItem('trackedQueries', trackedQueries)
+        window.localStorage.setItem('trackedQueries', JSON.stringify(trackedQueries))
       }
 
       return data

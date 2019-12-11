@@ -151,7 +151,7 @@ const getApolloClient = async () => {
     window.localStorage.setItem(SCHEMA_VERSION_KEY, SCHEMA_VERSION)
   }
 
-  return new ApolloClient({ httpLink, cache })
+  return new ApolloClient({ link: httpLink, cache })
 }
 
 export default getApolloClient

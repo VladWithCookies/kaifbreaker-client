@@ -122,7 +122,7 @@ Offline first или cache first - это такая популярная стр
 
 https://blog.apollographql.com/announcing-apollo-cache-persist-cb05aec16325
 
-Пример, который нужно будет проверить на работоспособность
+Пример
 ```js
 import { ApolloClient } from 'apollo-client'
 import { HttpLink } from 'apollo-link-http'
@@ -300,7 +300,7 @@ const API_HOST = 'http://localhost:3000/graphql'
 const SCHEMA_VERSION = '1'
 const SCHEMA_VERSION_KEY = 'apollo-schema-version'
 
-const getApolloClient = async () => {
+const getApolloClient = () => {
   const httpLink = new HttpLink({ uri: API_HOST })
   const retryLink = new RetryLink({ attempts: { max: Infinity } })
   const queueLink = new QueueLink()
@@ -323,7 +323,7 @@ const getApolloClient = async () => {
     storage: window.localStorage,
   })
 
-  const currentVersion = await window.localStorage.getItem(SCHEMA_VERSION_KEY)
+  const currentVersion = window.localStorage.getItem(SCHEMA_VERSION_KEY)
 
   if (currentVersion === SCHEMA_VERSION) {
     await persistor.restore();

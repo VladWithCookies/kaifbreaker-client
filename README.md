@@ -440,6 +440,8 @@ export default getApolloClient
     queueLink,
     serializingLink,
     retryLink,
+    errorLink,
+    authLink,
     httpLink
   ])
 ```

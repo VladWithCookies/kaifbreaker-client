@@ -228,6 +228,31 @@ function NewProjectModal(props) {
   const handleToggleModal = () => {
     setIsOpen(!isOpen)
   }
+  
+  const handleSubmit = (values) => {
+    const { mutate } = props
+    
+    mutate({
+      variables: values,
+      update: (cache, { data: { createProject } }) => {
+        const data = cache.readQuery({ query: getProjects })
+
+        data.projects.push(createProject)
+        cache.writeQuery({ query: getProjects, data })
+      },
+      optimisticResponse: {
+        createProject: {
+          id: -1,
+          __typename: 'Project',
+          tasks: [],
+          ...values,
+        },
+      },
+      context: {
+        serializationKey: 'CREATE_PROJECT',
+      },
+    })
+  }
 
   return (
     <NewProjectModalComponent
@@ -235,31 +260,9 @@ function NewProjectModal(props) {
       isOpen={isOpen}
       onOpen={handleToggleModal}
       onClose={handleToggleModal}
+      onSubmit={handleSubmit}
     />
   )
-}
-
-const handleSubmit = (values, { props: { mutate } }) => {
-  mutate({
-    variables: values,
-    update: (cache, { data: { createProject } }) => {
-      const data = cache.readQuery({ query: getProjects })
-
-      data.projects.push(createProject)
-      cache.writeQuery({ query: getProjects, data })
-    },
-    optimisticResponse: {
-      createProject: {
-        id: -1,
-        __typename: 'Project',
-        tasks: [],
-        ...values,
-      },
-    },
-    context: {
-      serializationKey: 'CREATE_PROJECT',
-    },
-  })
 }
 
 export graphql(createProject)(NewProjectModal)

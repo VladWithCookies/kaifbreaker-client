@@ -331,7 +331,7 @@ const getApolloClient = async () => {
     await persistor.restore();
   } else {
     await persistor.purge()
-    await window.localStorage.setItem(SCHEMA_VERSION_KEY, SCHEMA_VERSION)
+    window.localStorage.setItem(SCHEMA_VERSION_KEY, SCHEMA_VERSION)
   }
 
   return new ApolloClient({ link, cache })

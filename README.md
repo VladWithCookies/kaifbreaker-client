@@ -130,7 +130,6 @@ import { CachePersistor } from 'apollo-cache-persist'
 import { InMemoryCache } from 'apollo-cache-inmemory'
 
 const API_HOST = 'http://localhost:3000/graphql'
-
 const SCHEMA_VERSION = '1'
 const SCHEMA_VERSION_KEY = 'apollo-schema-version'
 
@@ -152,12 +151,7 @@ const getApolloClient = async () => {
     window.localStorage.setItem(SCHEMA_VERSION_KEY, SCHEMA_VERSION)
   }
 
-  const client = new ApolloClient({
-    httpLink,
-    cache,
-  })
-
-  return client
+  return new ApolloClient({ httpLink, cache })
 }
 
 export default getApolloClient
@@ -167,7 +161,7 @@ export default getApolloClient
 ```js
 import React, { useEffect, useState } from 'react'
 
-import getApolloClient from '../../apolloClient'
+import getApolloClient from 'apolloClient'
 import AppComponent from './component'
 
 export default function App() {
@@ -186,13 +180,11 @@ export default function App() {
 ```
 
 ```js
-//src/components/App/component.js
-
 import React from 'react'
 import { ApolloProvider } from 'react-apollo'
 
-import Loader from '../Loader'
-import Router from '../../Router'
+import Loader from 'components/Loader'
+import Router from 'Router'
 import useStyles from './styles'
 
 export default function App({ client, loading }) {
@@ -224,24 +216,14 @@ export default function App({ client, loading }) {
 
 ```js
 import React, { useState, useEffect } from 'react'
-import { withFormik } from 'formik'
-import { compose, graphql } from 'react-apollo'
-import dayjs from 'dayjs'
+import { graphql } from 'react-apollo'
 
-import { getProjects } from '../../../queries'
-import { createProject } from '../../../mutations'
-import validationSchema from './validations'
+import { getProjects } from 'queries'
+import { createProject } from 'mutations'
 import NewProjectModalComponent from './component'
 
 function NewProjectModal(props) {
   const [isOpen, setIsOpen] = useState(false)
-
-  useEffect(() => {
-    if (props.status === 'submitted') {
-      setIsOpen(false)
-      props.setStatus(null)
-    }
-  }, [props])
 
   const handleToggleModal = () => {
     setIsOpen(!isOpen)
@@ -257,9 +239,7 @@ function NewProjectModal(props) {
   )
 }
 
-const handleSubmit = (values, { props, setSubmitting, setStatus, resetForm }) => {
-  const { mutate } = props
-
+const handleSubmit = (values, { props: { mutate } }) => {
   mutate({
     variables: values,
     update: (cache, { data: { createProject } }) => {
@@ -272,7 +252,6 @@ const handleSubmit = (values, { props, setSubmitting, setStatus, resetForm }) =>
       createProject: {
         id: -1,
         __typename: 'Project',
-        createdAt: dayjs().toString(),
         tasks: [],
         ...values,
       },
@@ -281,23 +260,9 @@ const handleSubmit = (values, { props, setSubmitting, setStatus, resetForm }) =>
       serializationKey: 'CREATE_PROJECT',
     },
   })
-
-  setSubmitting(false)
-  resetForm()
-  setStatus('submitted')
 }
 
-const mapPropsToValues = () => ({
-  title: '',
-  description: '',
-  deadline: dayjs().add(1, 'week').toString(),
-  public: false
-})
-
-export default compose(
-  graphql(createProject),
-  withFormik({ handleSubmit, mapPropsToValues, validationSchema })
-)(NewProjectModal)
+export graphql(createProject)(NewProjectModal)
 ```
 
 А что дальше? Мы показали пользователю optimistic response, но нужно еще отправить его запрос, когда это будет возможно. Тут у нас будет целое комбо из библиотек:
@@ -319,60 +284,33 @@ https://www.apollographql.com/docs/link/overview/
 
 Пример для всего и сразу, который нужно декомпозировать, возможно
 ```js
-import Cookies from 'js-cookie'
 import { ApolloClient } from 'apollo-client'
 import { ApolloLink } from 'apollo-link'
 import QueueLink from 'apollo-link-queue'
 import { HttpLink } from 'apollo-link-http'
 import { RetryLink } from 'apollo-link-retry'
-import { onError } from 'apollo-link-error'
 import { setContext } from 'apollo-link-context'
 import SerializingLink from 'apollo-link-serialize'
 import { CachePersistor } from 'apollo-cache-persist'
 import { InMemoryCache } from 'apollo-cache-inmemory'
 
-const API_HOST = process.env.NODE_ENV === 'production'
-  ? 'https://cryptic-bayou-76235.herokuapp.com/graphql'
-  : 'http://localhost:3000/graphql'
-
+const API_HOST = 'http://localhost:3000/graphql'
 const SCHEMA_VERSION = '1'
 const SCHEMA_VERSION_KEY = 'apollo-schema-version'
 
 const getApolloClient = async () => {
   const httpLink = new HttpLink({ uri: API_HOST })
   const retryLink = new RetryLink({ attempts: { max: Infinity } })
-
-  const authLink = setContext(({ headers }) => {
-    const token = Cookies.get('token')
-
-    return {
-      headers: {
-        ...headers,
-        Authorization: token ? `Bearer ${token}` : ''
-      }
-    }
-  })
-
-  const errorLink = onError(({ networkError }) => {
-    if (networkError && networkError.statusCode === 401) {
-      Cookies.remove('token')
-      window.location.replace('/login')
-    }
-  })
-
   const queueLink = new QueueLink()
+  const serializingLink = new SerializingLink()
 
   window.addEventListener('offline', () => queueLink.close())
   window.addEventListener('online', () => queueLink.open())
-
-  const serializingLink = new SerializingLink()
 
   const link = ApolloLink.from([
     queueLink,
     serializingLink,
     retryLink,
-    errorLink,
-    authLink,
     httpLink
   ])
 
@@ -392,12 +330,7 @@ const getApolloClient = async () => {
     await window.localStorage.setItem(SCHEMA_VERSION_KEY, SCHEMA_VERSION)
   }
 
-  const client = new ApolloClient({
-    link,
-    cache,
-  })
-
-  return client
+  return new ApolloClient({ link, cache })
 }
 
 export default getApolloClient
@@ -408,7 +341,7 @@ export default getApolloClient
 Нужно написать кастомный `link`
 ```js
  const trackerLink = new ApolloLink((operation, forward) => {
-    if (!forward) return null
+    if (forward === undefined) return null
 
     const context = operation.getContext()
     const trackedQueries = JSON.parse(window.localStorage.getItem('trackedQueries') || null) || []
@@ -444,8 +377,6 @@ export default getApolloClient
     queueLink,
     serializingLink,
     retryLink,
-    errorLink,
-    authLink,
     httpLink
   ])
 ```
@@ -455,8 +386,8 @@ export default getApolloClient
 ```js
 import React, { useEffect, useState } from 'react'
 
-import * as updateFunctions from '../../updateFunctions'
-import getApolloClient from '../../apolloClient'
+import * as updateFunctions from 'updateFunctions'
+import getApolloClient from 'apolloClient'
 import AppComponent from './component'
 
 export default function App() {
@@ -515,7 +446,7 @@ importScripts('https://www.gstatic.com/firebasejs/3.6.8/firebase-app.js');
 importScripts('https://www.gstatic.com/firebasejs/3.6.8/firebase-messaging.js');
 
 firebase.initializeApp({
-  messagingSenderId: '<твой сендер айди>'
+  messagingSenderId: '<your sender id>'
 });
 
 const messaging = firebase.messaging();

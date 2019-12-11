@@ -451,14 +451,13 @@ export default getApolloClient
 ```js
 import React, { useEffect, useState } from 'react'
 
-import * as updateFunctions from 'updateFunctions'
-import getApolloClient from 'apolloClient'
+import * as updateFunctions from '../../updateFunctions'
+import getApolloClient from '../../apolloClient'
 import AppComponent from './component'
 
 export default function App() {
   const [client, setClient] = useState(null)
   const [loading, setLoading] = useState(true)
-  const [online, setOnline] = useState(true)
 
   useEffect(() => {
     getApolloClient().then((client) => {

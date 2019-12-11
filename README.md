@@ -302,7 +302,7 @@ const API_HOST = 'http://localhost:3000/graphql'
 const SCHEMA_VERSION = '1'
 const SCHEMA_VERSION_KEY = 'apollo-schema-version'
 
-const getApolloClient = () => {
+const getApolloClient = async () => {
   const httpLink = new HttpLink({ uri: API_HOST })
   const retryLink = new RetryLink({ attempts: { max: Infinity } })
   const queueLink = new QueueLink()

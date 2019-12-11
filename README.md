@@ -161,7 +161,7 @@ export default getApolloClient
 ```js
 import React, { useEffect, useState } from 'react'
 
-import getApolloClient from 'apolloClient'
+import getApolloClient from '../../apolloClient'
 import AppComponent from './component'
 
 export default function App() {
@@ -183,8 +183,8 @@ export default function App() {
 import React from 'react'
 import { ApolloProvider } from 'react-apollo'
 
-import Loader from 'components/Loader'
-import Router from 'Router'
+import Loader from '../Loader'
+import Router from '../../Router'
 import useStyles from './styles'
 
 export default function App({ client, loading }) {
@@ -215,11 +215,11 @@ export default function App({ client, loading }) {
 Примерчик с optimistic response (надо его порезать чутка, выпилить formik и прочее что не очень важно в данном контексте):
 
 ```js
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { graphql } from 'react-apollo'
 
-import { getProjects } from 'queries'
-import { createProject } from 'mutations'
+import { getProjects } from '../../../queries'
+import { createProject } from '../../../mutations'
 import NewProjectModalComponent from './component'
 
 function NewProjectModal(props) {
@@ -228,10 +228,10 @@ function NewProjectModal(props) {
   const handleToggleModal = () => {
     setIsOpen(!isOpen)
   }
-  
+
   const handleSubmit = (values) => {
     const { mutate } = props
-    
+
     mutate({
       variables: values,
       update: (cache, { data: { createProject } }) => {
@@ -265,7 +265,7 @@ function NewProjectModal(props) {
   )
 }
 
-export graphql(createProject)(NewProjectModal)
+export default graphql(createProject)(NewProjectModal)
 ```
 
 А что дальше? Мы показали пользователю optimistic response, но нужно еще отправить его запрос, когда это будет возможно. Тут у нас будет целое комбо из библиотек:

@@ -289,32 +289,89 @@ https://www.apollographql.com/docs/link/overview/
 
 Пример для всего и сразу, который нужно декомпозировать, возможно
 ```js
+import Cookies from 'js-cookie'
 import { ApolloClient } from 'apollo-client'
 import { ApolloLink } from 'apollo-link'
 import QueueLink from 'apollo-link-queue'
 import { HttpLink } from 'apollo-link-http'
 import { RetryLink } from 'apollo-link-retry'
+import { onError } from 'apollo-link-error'
+import { setContext } from 'apollo-link-context'
 import SerializingLink from 'apollo-link-serialize'
 import { CachePersistor } from 'apollo-cache-persist'
 import { InMemoryCache } from 'apollo-cache-inmemory'
 
-const API_HOST = 'http://localhost:3000/graphql'
+const API_HOST = process.env.NODE_ENV === 'production'
+  ? 'https://cryptic-bayou-76235.herokuapp.com/graphql'
+  : 'http://localhost:3000/graphql'
+
 const SCHEMA_VERSION = '1'
 const SCHEMA_VERSION_KEY = 'apollo-schema-version'
 
 const getApolloClient = async () => {
   const httpLink = new HttpLink({ uri: API_HOST })
   const retryLink = new RetryLink({ attempts: { max: Infinity } })
+
+  const authLink = setContext(({ headers }) => {
+    const token = Cookies.get('token')
+
+    return {
+      headers: {
+        ...headers,
+        Authorization: token ? `Bearer ${token}` : ''
+      }
+    }
+  })
+
+  const errorLink = onError(({ networkError }) => {
+    if (networkError && networkError.statusCode === 401) {
+      Cookies.remove('token')
+      window.location.replace('/login')
+    }
+  })
+
   const queueLink = new QueueLink()
-  const serializingLink = new SerializingLink()
 
   window.addEventListener('offline', () => queueLink.close())
   window.addEventListener('online', () => queueLink.open())
 
+  const serializingLink = new SerializingLink()
+
+  const trackerLink = new ApolloLink((operation, forward) => {
+    if (forward === undefined) return null
+
+    const context = operation.getContext()
+    const trackedQueries = JSON.parse(window.localStorage.getItem('trackedQueries') || null) || []
+
+    if (context.tracked !== undefined) {
+      const { operationName, query, variables } = operation
+
+      const newTrackedQuery = {
+        query,
+        context,
+        variables,
+        operationName,
+      }
+
+      window.localStorage.setItem('trackedQueries', JSON.stringify([...trackedQueries, newTrackedQuery]))
+    }
+
+    return forward(operation).map((data) => {
+      if (context.tracked !== undefined) {
+        window.localStorage.setItem('trackedQueries', JSON.stringify(trackedQueries))
+      }
+
+      return data
+    })
+  })
+
   const link = ApolloLink.from([
+    trackerLink,
     queueLink,
     serializingLink,
     retryLink,
+    errorLink,
+    authLink,
     httpLink
   ])
 
@@ -334,7 +391,12 @@ const getApolloClient = async () => {
     window.localStorage.setItem(SCHEMA_VERSION_KEY, SCHEMA_VERSION)
   }
 
-  return new ApolloClient({ link, cache })
+  const client = new ApolloClient({
+    link,
+    cache,
+  })
+
+  return client
 }
 
 export default getApolloClient
@@ -407,12 +469,7 @@ export default function App() {
   }, [])
 
   useEffect(() => {
-    window.addEventListener('offline', () => setOnline(false))
-    window.addEventListener('online', () => setOnline(true))
-  }, [])
-
-  useEffect(() => {
-    if (!client || !online) return
+    if (!client) return
 
     const execute = async () => {
       const trackedQueries = JSON.parse(window.localStorage.getItem('trackedQueries') || null) || []
@@ -431,7 +488,7 @@ export default function App() {
     }
 
     execute()
-  }, [client, online])
+  }, [client])
 
   return <AppComponent client={client} loading={loading} />
 }

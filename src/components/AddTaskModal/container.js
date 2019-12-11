@@ -48,6 +48,7 @@ const handleSubmit = (values, { props, setSubmitting, setStatus, resetForm }) =>
     optimisticResponse: {
       createTask: {
         id: -1,
+        done: false,
         __typename: 'Task',
         createdAt: dayjs().toString(),
         projectId,

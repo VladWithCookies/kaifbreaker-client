@@ -91,13 +91,13 @@ const getApolloClient = async () => {
     storage: window.localStorage,
   })
 
-  const currentVersion = await window.localStorage.getItem(SCHEMA_VERSION_KEY)
+  const currentVersion = window.localStorage.getItem(SCHEMA_VERSION_KEY)
 
   if (currentVersion === SCHEMA_VERSION) {
     await persistor.restore();
   } else {
     await persistor.purge()
-    await window.localStorage.setItem(SCHEMA_VERSION_KEY, SCHEMA_VERSION)
+    window.localStorage.setItem(SCHEMA_VERSION_KEY, SCHEMA_VERSION)
   }
 
   const client = new ApolloClient({

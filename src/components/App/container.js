@@ -7,7 +7,6 @@ import AppComponent from './component'
 export default function App() {
   const [client, setClient] = useState(null)
   const [loading, setLoading] = useState(true)
-  const [online, setOnline] = useState(true)
 
   useEffect(() => {
     getApolloClient().then((client) => {
@@ -17,12 +16,7 @@ export default function App() {
   }, [])
 
   useEffect(() => {
-    window.addEventListener('offline', () => setOnline(false))
-    window.addEventListener('online', () => setOnline(true))
-  }, [])
-
-  useEffect(() => {
-    if (!client || !online) return
+    if (!client) return
 
     const execute = async () => {
       const trackedQueries = JSON.parse(window.localStorage.getItem('trackedQueries') || null) || []
@@ -41,7 +35,7 @@ export default function App() {
     }
 
     execute()
-  }, [client, online])
+  }, [client])
 
   return <AppComponent client={client} loading={loading} />
 }

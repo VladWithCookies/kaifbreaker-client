@@ -53,8 +53,8 @@ https://developers.google.com/web/fundamentals/web-app-manifest/
 У меня получился такой манифест:
 ```json
 {
-  "name": "КАЙФОЛОМ",
-  "short_name": "КАЙФОЛОМ",
+  "name": "PWA Demo",
+  "short_name": "PWA Demo",
   "background_color": "#039be5",
   "display": "standalone",
   "scope": "/",

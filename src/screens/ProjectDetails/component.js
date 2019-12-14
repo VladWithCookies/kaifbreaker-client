@@ -3,27 +3,27 @@ import { Delete } from '@material-ui/icons'
 import { Container, Typography, Card, CardHeader, CardContent, Button } from '@material-ui/core'
 
 import Project from '../../components/Project'
-import BackNavigation from '../../components/BackNavigation'
 import RoundProgress from '../../components/RoundProgress'
+import Navigation from './Navigation'
 import useStyles from './styles'
 
-export default function ProjectDetails({ onDelete }) {
+export default function ProjectDetails({ onDelete, id, tasks, description }) {
   const classes = useStyles()
 
   return (
     <React.Fragment>
-      <BackNavigation title='Project title' />
+      <Navigation />
       <Container className={classes.container}>
-        <Card className={classes.card}>
-          <CardHeader title='Project description' />
-          <CardContent>
-            <Typography variant='body1'>
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur
-              unde suscipit, quam beatae rerum inventore consectetur, neque doloribus, cupiditate numquam
-              dignissimos laborum fugiat deleniti? Eum quasi quidem quibusdam.
-            </Typography>
-          </CardContent>
-        </Card>
+        {description && (
+          <Card className={classes.card}>
+            <CardHeader title='Project description' />
+            <CardContent>
+              <Typography variant='body1'>
+                {description}
+              </Typography>
+            </CardContent>
+          </Card>
+        )}
         <Card className={classes.card}>
           <CardHeader title='Stats' />
           <RoundProgress />
@@ -31,7 +31,7 @@ export default function ProjectDetails({ onDelete }) {
         </Card>
         <Card className={classes.card}>
           <CardHeader title='Tasks' />
-          <Project />
+          <Project id={id} tasks={tasks} />
         </Card>
         <Button
           onClick={onDelete}

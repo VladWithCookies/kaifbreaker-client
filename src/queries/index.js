@@ -1,3 +1,4 @@
+import getProject from './getProject'
 import getProjects from './getProjects'
 
-export { getProjects }
+export { getProject, getProjects }

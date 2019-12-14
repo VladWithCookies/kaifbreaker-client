@@ -2,7 +2,12 @@ import React from 'react'
 import { ArrowBack } from '@material-ui/icons'
 import { AppBar, Toolbar, IconButton, Typography } from '@material-ui/core'
 
-export default function BackNavigation({ title, history }) {
+import EditProjectModal from '../../../components/EditProjectModal'
+import useStyles from './styles'
+
+export default function Navigation({ title, onClick }) {
+  const classes = useStyles()
+
   return (
     <AppBar position='fixed'>
       <Toolbar>
@@ -10,13 +15,15 @@ export default function BackNavigation({ title, history }) {
           edge='start'
           color='inherit'
           aria-label='Back'
-          onClick={history.goBack}
+          onClick={onClick}
         >
           <ArrowBack />
         </IconButton>
         <Typography variant='h6'>
           {title}
         </Typography>
+        <div className={classes.grow} />
+        <EditProjectModal />
       </Toolbar>
     </AppBar>
   )

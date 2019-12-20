@@ -29,7 +29,11 @@ export default function App() {
         optimisticResponse: context.optimisticResponse,
       }))
 
-      await Promise.all(promises)
+      try {
+        await Promise.all(promises)
+      } catch (error) {
+        // TODO
+      }
 
       window.localStorage.setItem('trackedQueries', [])
     }

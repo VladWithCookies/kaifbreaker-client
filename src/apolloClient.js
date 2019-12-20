@@ -52,7 +52,7 @@ const getApolloClient = async () => {
     const context = operation.getContext()
     const trackedQueries = JSON.parse(window.localStorage.getItem('trackedQueries') || null) || []
 
-    if (context.tracked !== undefined) {
+    if (context.tracked) {
       const { operationName, query, variables } = operation
 
       const newTrackedQuery = {
@@ -66,7 +66,7 @@ const getApolloClient = async () => {
     }
 
     return forward(operation).map((data) => {
-      if (context.tracked !== undefined) {
+      if (context.tracked) {
         window.localStorage.setItem('trackedQueries', JSON.stringify(trackedQueries))
       }
 

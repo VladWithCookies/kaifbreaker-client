@@ -9,6 +9,7 @@ import TaskComponent from './component'
 function Task(props) {
   const handleDelete = () => {
     const { deleteTask, id, projectId } = props
+    const isSynced = id !== -1
 
     deleteTask({
       variables: {
@@ -16,7 +17,7 @@ function Task(props) {
       },
       update: updateFunctions.deleteTask,
       context: {
-        tracked: true,
+        tracked: isSynced,
         serializationKey: 'DELETE_TASK',
       },
       optimisticResponse: {

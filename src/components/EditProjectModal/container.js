@@ -37,6 +37,7 @@ const mapPropsToValues = ({ data: { project = {} } }) => project
 
 const handleSubmit = (values, { props, setSubmitting, setStatus, resetForm }) => {
   const { mutate, data: { project } } = props
+  const isSynced = project.id !== -1
 
   mutate({
     variables: { id: project.id, ...values },
@@ -49,7 +50,7 @@ const handleSubmit = (values, { props, setSubmitting, setStatus, resetForm }) =>
       },
     },
     context: {
-      tracked: true,
+      tracked: isSynced,
       serializationKey: 'UPDATE_PROJECT',
     }
   })

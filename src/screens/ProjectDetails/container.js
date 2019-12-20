@@ -17,6 +17,7 @@ function ProjectDetails({
 }) {
   const handleDelete = () => {
     const { id } = match.params
+    const isSynced = id !== -1
 
     mutate({
       variables: {
@@ -30,7 +31,7 @@ function ProjectDetails({
         },
       },
       context: {
-        tracked: true,
+        tracked: isSynced,
         serializationKey: 'DELETE_PROJECT',
       },
     })

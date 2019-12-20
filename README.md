@@ -409,7 +409,7 @@ export default getApolloClient
     const context = operation.getContext()
     const trackedQueries = JSON.parse(window.localStorage.getItem('trackedQueries') || null) || []
 
-    if (context.tracked !== undefined) {
+    if (context.tracked) {
       const { operationName, query, variables } = operation
 
       const newTrackedQuery = {
@@ -423,7 +423,7 @@ export default getApolloClient
     }
 
     return forward(operation).map((data) => {
-      if (context.tracked !== undefined) {
+      if (context.tracked) {
         window.localStorage.setItem('trackedQueries', JSON.stringify(trackedQueries))
       }
 
@@ -480,7 +480,13 @@ export default function App() {
         optimisticResponse: context.optimisticResponse,
       }))
 
-      await Promise.all(promises)
+      try {
+        await Promise.all(promises)
+      } catch (error) {
+        // Место чтобы показать нотификацию например
+        // Не всегда в этом случаи будет все будет идти гладко, 
+        // лучше дать знать пользователю, что что-то из его планов не удалось
+      }
 
       window.localStorage.setItem('trackedQueries', [])
     }
